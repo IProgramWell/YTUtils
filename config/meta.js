@@ -13,6 +13,7 @@ const METADATA = {
 	"inject-into": "page",
 	"run-at": "document-start",
 	description: "Useful YouTube utilities.",
+	downloadURL: "https://raw.githubusercontent.com/IProgramWell/YTUtils/master/dist/YTUtils.user.js",
 };
 
 /**
