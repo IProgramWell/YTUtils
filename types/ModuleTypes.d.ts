@@ -1,0 +1,1 @@
+export type ModuleEventHandler = () => (boolean | null | undefined);
