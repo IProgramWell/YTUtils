@@ -1,13 +1,22 @@
 const Path = require("path"); // required for path resolution for dist folder
-// const Webpack = require("webpack"); // used to access the BannerPlugin
+const Webpack = require("webpack"); // used to access the BannerPlugin
 const TerserPlugin = require("terser-webpack-plugin");
 
 const Metadata = require("./config/meta");
+/** @type {Webpack.Configuration["mode"]} */
+const MODE = [
+	"development",
+	"none",
+	"production"
+]
+	.includes(process.env.NODE_ENV)
+	? process.env.NODE_ENV
+	: "production";
 
 /** @type {import("webpack").Configuration} */
 module.exports = {
 	entry: "./src/index.ts",
-	mode: "production",
+	mode: MODE,
 	module: {
 		rules: [
 			{
@@ -22,7 +31,7 @@ module.exports = {
 	},
 	output: {
 		path: Path.resolve(__dirname, "dist"),
-		filename: `${Metadata.METADATA.name.replace(/\W/g, "")}.user.js`
+		filename: `${Metadata.METADATA_COMMON.name.replace(/\W/g, "")}.user.js`
 	},
 	optimization: {
 		minimize: true,
@@ -30,7 +39,7 @@ module.exports = {
 			new TerserPlugin({
 				terserOptions: {
 					format: {
-						preamble: Metadata.generateMetadataBlock(),
+						preamble: Metadata.generateMetadataBlock(MODE),
 					}
 				}
 			})

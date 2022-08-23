@@ -3,7 +3,7 @@
  */
 
 /** @type {Metadata} */
-const METADATA = {
+const METADATA_COMMON = {
 	name: "YT Utils",
 	namespace: "Violentmonkey Scripts",
 	match: ["https://www.youtube.com/**"],
@@ -13,8 +13,12 @@ const METADATA = {
 	"inject-into": "page",
 	"run-at": "document-start",
 	description: "Useful YouTube utilities.",
+};
+/** @type {Metadata} */
+const METADATA_PROD = {
 	downloadURL: "https://raw.githubusercontent.com/IProgramWell/YTUtils/master/dist/YTUtils.user.js",
 };
+const METADATA_DEV = {};
 
 /**
  * @type {{
@@ -57,11 +61,32 @@ const TAG_TO_STRING = {
 
 /**
  * 
- * @param {Metadata} metadata 
+ * @param {import("webpack").Configuration["mode"]} [mode]
  * @returns {string}
  */
-function generateMetadataBlock(metadata = METADATA)
+function generateMetadataBlock(mode = "production")
 {
+	/** @type {Metadata} */
+	let metadata;
+	switch (mode)
+	{
+		case "development":
+			metadata = {
+				...METADATA_COMMON,
+				...METADATA_DEV,
+			};
+			break;
+		case "none":
+			metadata = METADATA_COMMON;
+			break;
+		case "production":
+		default:
+			metadata = {
+				...METADATA_COMMON,
+				...METADATA_PROD,
+			};
+			break;
+	}
 	/** @type {string[]} */
 	const MetadataSegments = [];
 	/** @type {string} */
@@ -83,7 +108,8 @@ ${MetadataSegments.join("\n")}
 const BLOCK_REGEX = /^\/\/\W?(==\/?UserScript==|@\W?\w+\W*.*)/i;
 
 module.exports = {
-	METADATA,
+	METADATA_COMMON,
+	METADATA_PROD,
 	TAG_TO_STRING,
 	generateMetadataBlock,
 	BLOCK_REGEX,
