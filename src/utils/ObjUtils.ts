@@ -1,4 +1,4 @@
-import { TypedObject } from "../../types/GeneralTypes";
+import type { TypedObject } from "../../types/GeneralTypes";
 
 /**
  * I want intelisense to recognise the methods as, well, methods,

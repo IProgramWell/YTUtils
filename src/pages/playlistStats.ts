@@ -1,14 +1,19 @@
 import { GLOBAL_MANAGER } from "../config/index";
 import { getTimeString } from "../utils/DateUtils";
 
+import type {
+	IYTCustomEvent
+} from "../../types/CustomEvent";
+
 /**
  * Adds the total and estimated remaining time of the current playlist.
  */
-export default function initCustomPlaylistRuntimeDisplay()
+export default function initCustomPlaylistRuntimeDisplay(payload: IYTCustomEvent)
 {
-	/** @type {{ total: number, remaining: number }} */
-	let playlistSeconds: { total: number; remaining: number; } = (globalThis as any)
-		.ytInitialData
+	let playlistSeconds: { total: number; remaining: number; } = payload
+		.detail
+		.pageData
+		.response
 		.contents
 		.twoColumnBrowseResultsRenderer
 		.tabs[0]
@@ -21,7 +26,10 @@ export default function initCustomPlaylistRuntimeDisplay()
 		.playlistVideoListRenderer
 		.contents
 		.reduce(
-			(playlist: typeof playlistSeconds, video: any): typeof playlistSeconds =>
+			(
+				playlist: typeof playlistSeconds,
+				video: any
+			): typeof playlistSeconds =>
 			{
 				let total = Number.parseInt(video.playlistVideoRenderer.lengthSeconds),
 					percentage = video
@@ -42,7 +50,7 @@ export default function initCustomPlaylistRuntimeDisplay()
 				return playlist;
 			},
 			{ total: 0, remaining: 0, }
-		);
+		)
 
 	let runtimeString = `Runtime: ${getTimeString(playlistSeconds.total)}`,
 		remainingString = `Estimated remaining: ${getTimeString(playlistSeconds.remaining)}`;
@@ -53,8 +61,10 @@ export default function initCustomPlaylistRuntimeDisplay()
 		remainingString
 	});
 
-	(globalThis as any)
-		.ytInitialData
+	payload
+		.detail
+		.pageData
+		.response
 		.sidebar
 		.playlistSidebarRenderer
 		.items[0]

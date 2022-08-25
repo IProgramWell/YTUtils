@@ -1,1 +1,1 @@
-export type ModuleEventHandler = () => (boolean | null | undefined);
+export type ModuleEventHandler<Args extends Array<any> = [], Return = boolean | null | undefined> = (...args: Args) => Return;

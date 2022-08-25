@@ -40,19 +40,19 @@ export default class PathWatcher extends AutoBound
 			if (
 				module.isActive &&
 				!shouldBeActive &&
-				module.methods.onModuleStop
+				module.eventHandlers.onModuleStop
 			)
 			{
-				module.isActive = (module.methods.onModuleStop?.() as boolean) ?? false;
+				module.isActive = (module.eventHandlers.onModuleStop?.() as boolean) ?? false;
 				this.logger.print(`Stopped module: "${module.moduleName}" for regex: ${module.pathRegex}`);
 			}
 			else if (
 				!module.isActive &&
 				shouldBeActive &&
-				module.methods.onModuleStart
+				module.eventHandlers.onModuleStart
 			)
 			{
-				module.isActive = (module.methods.onModuleStart?.() as boolean) ?? true;
+				module.isActive = (module.eventHandlers.onModuleStart?.() as boolean) ?? true;
 				this.logger.print(`Started module: "${module.moduleName}" for regex: ${module.pathRegex}`);
 			}
 		}
