@@ -44,7 +44,8 @@ export default class PathWatcher extends AutoBound
 			)
 			{
 				module.isActive = (module.eventHandlers.onModuleStop?.() as boolean) ?? false;
-				this.logger.print(`Stopped module: "${module.moduleName}" for regex: ${module.pathRegex}`);
+				if (!module.isActive)
+					this.logger.print(`Stopped module: "${module.moduleName}" for regex: ${module.pathRegex}`);
 			}
 			else if (
 				!module.isActive &&
@@ -53,7 +54,8 @@ export default class PathWatcher extends AutoBound
 			)
 			{
 				module.isActive = (module.eventHandlers.onModuleStart?.() as boolean) ?? true;
-				this.logger.print(`Started module: "${module.moduleName}" for regex: ${module.pathRegex}`);
+				if (module.isActive)
+					this.logger.print(`Started module: "${module.moduleName}" for regex: ${module.pathRegex}`);
 			}
 		}
 	}
