@@ -1,5 +1,5 @@
 import { GLOBAL_WATCHER } from "./config";
-import * as Modules from "./modules";
+import { ModuleUtils } from "./modules";
 
 import type { IYTCustomEvent } from "../types/CustomEvent";
 
@@ -16,16 +16,16 @@ import type { IYTCustomEvent } from "../types/CustomEvent";
 // {
 GLOBAL_WATCHER.start();
 
-Modules.onModuleEvent("onDocumentStart", []);
+ModuleUtils.onModuleEvent("onDocumentStart", []);
 
 globalThis.addEventListener(
 	"yt-page-data-fetched",
 	(payload: IYTCustomEvent) =>
-		Modules.onModuleEvent("onPageDataFetch", [payload])
+		ModuleUtils.onModuleEvent("onPageDataFetch", [payload])
 );
 
 globalThis.addEventListener(
 	"load",
-	() => Modules.onModuleEvent("onDocumentLoad", [])
+	() => ModuleUtils.onModuleEvent("onDocumentLoad", [])
 );
 // })();
