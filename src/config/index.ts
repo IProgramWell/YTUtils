@@ -1,6 +1,6 @@
 import IOManager from "../utils/IOManager";
 import PathWatcher from "../utils/PathWatcher";
-import MODULES from "../modules";
+import { MODULES } from "../modules";
 
 export const GLOBAL_MANAGER = new IOManager(
 	globalThis

@@ -1,6 +1,6 @@
 import { AutoBound } from "./ObjUtils";
 import IOManager from "./IOManager";
-import YTUModule from "../modules/YTUModule";
+import { YTUModule } from "../modules";
 import { GLOBAL_MANAGER } from "../config";
 
 export default class PathWatcher extends AutoBound
