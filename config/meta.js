@@ -66,8 +66,13 @@ const TAG_TO_STRING = {
  */
 function generateMetadataBlock(mode = "production")
 {
+	/** @type {string[]} */
+	const MetadataSegments = [];
 	/** @type {Metadata} */
 	let metadata;
+	/** @type {string} */
+	let currentValue;
+
 	switch (mode)
 	{
 		case "development":
@@ -87,10 +92,7 @@ function generateMetadataBlock(mode = "production")
 			};
 			break;
 	}
-	/** @type {string[]} */
-	const MetadataSegments = [];
-	/** @type {string} */
-	let currentValue;
+
 	for (let key in metadata)
 	{
 		if (metadata[key])
@@ -100,9 +102,10 @@ function generateMetadataBlock(mode = "production")
 				MetadataSegments.push(currentValue);
 		}
 	}
+
 	return `// ==UserScript==
 ${MetadataSegments.join("\n")}
-// ==/UserScript==`
+// ==/UserScript==`;
 }
 
 const BLOCK_REGEX = /^\/\/\W?(==\/?UserScript==|@\W?\w+\W*.*)/i;
