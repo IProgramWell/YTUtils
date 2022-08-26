@@ -5,6 +5,8 @@ import type {
 	IYTCustomEvent
 } from "../../types/CustomEvent";
 
+//TODO: Find a way to make sure the time was added BEFORE being added to the sidebar.
+//(will probably work because the script runs first thing buuuuut...)
 /**
  * Adds the total and estimated remaining time of the current playlist.
  */
@@ -74,35 +76,36 @@ export default function initCustomPlaylistRuntimeDisplay(payload: IYTCustomEvent
 			{ simpleText: runtimeString },
 			{ simpleText: remainingString }
 		);
+	GLOBAL_MANAGER.print("Added time to playlist!");
 
-	const STATS_BLOCK = document.getElementById("stats");
-	if (STATS_BLOCK)
-	{
-		/*
-		 * If messing w/ YouTube's data didn't work,
-		 * manually add the desired text.
-		 */
-		let wasRuntimeAdded = STATS_BLOCK.innerText.includes(runtimeString),
-			wasRemainingAdded = STATS_BLOCK.innerText.includes(remainingString);
-
-		if (!wasRuntimeAdded)
-			STATS_BLOCK
-				.appendChild(Object.assign(
-					document.createElement("yt-formatted-string"),
-					{ className: "style-scope ytd-playlist-sidebar-primary-info-renderer" }
-				))
-				.innerHTML = runtimeString;
-		if (!wasRemainingAdded)
-			STATS_BLOCK
-				.appendChild(Object.assign(
-					document.createElement("yt-formatted-string"),
-					{ className: "style-scope ytd-playlist-sidebar-primary-info-renderer" }
-				))
-				.innerHTML = remainingString;
-
-		GLOBAL_MANAGER.print("Added time to playlist!");
-	}
-	else
-		GLOBAL_MANAGER.print("Unable to verify time was added :(");
 	return true;
+}
+
+export function addTimeManually(timeString: string, checkFirst = true): boolean
+{
+	try
+	{
+		const STATS_BLOCK = document.getElementById("stats");
+
+		if (!STATS_BLOCK)
+			return false;
+
+		if (checkFirst && STATS_BLOCK.innerText.includes(timeString))
+			return true;
+
+		STATS_BLOCK
+			.appendChild(Object.assign(
+				document.createElement("yt-formatted-string"),
+				{
+					className: "style-scope ytd-playlist-sidebar-primary-info-renderer",
+				}
+			))
+			.innerText = timeString;
+
+		return true;
+	}
+	catch (_)
+	{
+		return false;
+	}
 }
