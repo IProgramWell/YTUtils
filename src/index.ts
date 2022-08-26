@@ -8,10 +8,9 @@ import type { IYTCustomEvent } from "../types/CustomEvent";
  * - Potentially useful YT events:
  * 	 * "yt-navigate-finish",
  * 	 * "yt-page-data-fetched",
- * 
- * TODO:
- * - Fix custom playlist stats module shitting itself if playlist is too long.
  */
+
+//TODO: Fix custom playlist stats module shitting itself if playlist is too long.
 
 // (function main()
 // {

@@ -5,9 +5,6 @@ import type { TypedObject } from "../../types/GeneralTypes";
  * but I also want auto-bound functions.
  * 
  * This function replaces all methods in provided object with versions bound to said object.
- * @param {object} source
- * @param {object} bindTo
- * @param {object} assignTo
  */
 export function bindMethods<
 	T extends
@@ -61,15 +58,6 @@ export class AutoBound
 	}
 }
 
-/**
- * 
- * @template T
- * @template R
- * @param {T[]} arr 
- * @param {(element: T, index: number, array: T[]) => string} getKey
- * @param {(element: T, index: number, array: T[]) => R} getValue
- * @returns {{ [key: string]: R }} 
- */
 export function arrToObj<T, R = T>(
 	arr: T[],
 	getKey: (element: T, index: number, array: T[]) => string = (_, index) => index.toString(),

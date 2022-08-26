@@ -6,11 +6,6 @@ export default class IOManager extends AutoBound
 	logTimestamp: boolean;
 	timestampFormat: "ISO" | "UTC" | "Locale" | "Milliseconds" | "Human";
 
-	/**
-	 * @param {string} name
-	 * @param {boolean} logTimestamp
-	 * @param {typeof IOManager.prototype.timestampFormat} timestampFormat
-	 */
 	constructor (
 		name: string,
 		logTimestamp: boolean = true,
