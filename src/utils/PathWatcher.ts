@@ -1,15 +1,9 @@
 import { AutoBound } from "./ObjUtils";
 import IOManager from "./IOManager";
 import YTUModule from "../modules/YTUModule";
-import moduleList from "../modules/moduleList";
 
 export default class PathWatcher extends AutoBound
 {
-	static GLOBAL_WATCHER = new PathWatcher(
-		moduleList,
-		IOManager.GLOBAL_MANAGER
-	);
-
 	observerInstance: MutationObserver;
 	lastPath: string;
 	logger: IOManager;
