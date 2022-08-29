@@ -60,8 +60,16 @@ export class AutoBound
 
 export function arrToObj<T, R = T>(
 	arr: T[],
-	getKey: (element: T, index: number, array: T[]) => string = (_, index) => index.toString(),
-	getValue: (element: T, index: number, array: T[]) => (R | T) = elem => elem
+	getKey: (
+		element: T,
+		index: number,
+		array: T[]
+	) => string = (_, index) => index.toString(),
+	getValue: (
+		element: T,
+		index: number,
+		array: T[]
+	) => (R | T) = elem => elem
 ): Record<string, (R | T)>
 {
 	const result: ReturnType<typeof arrToObj<T, R>> = {};

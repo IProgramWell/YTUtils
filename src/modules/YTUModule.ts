@@ -1,8 +1,9 @@
-import
-{
-	AutoBound,
-	arrToObj,
-} from "../utils/ObjUtils";
+import {
+	IOManager,
+	ObjUtils
+} from "../utils";
+
+import { GLOBAL_MANAGER } from "../config/index";
 
 import type {
 	GeneralTypes,
@@ -10,7 +11,7 @@ import type {
 	CustomEvent,
 } from "../../types";
 
-export default class YTUModule extends AutoBound
+export default class YTUModule extends ObjUtils.AutoBound
 {
 	/**
 	 * A collection of per module event handlers,
@@ -42,12 +43,14 @@ export default class YTUModule extends AutoBound
 	pathRegex: RegExp = /\//i;
 	isActive: boolean = false;
 	moduleName: string | null | undefined = null;
+	logger: IOManager = GLOBAL_MANAGER;
 
 	constructor (moduleDetails: {
 		eventHandlers: typeof YTUModule["prototype"]["eventHandlers"],
 		methods?: typeof YTUModule["prototype"]["methods"],
 		pathRegex: string | RegExp,
 		moduleName?: string,
+		logger?: IOManager,
 	})
 	{
 
@@ -62,31 +65,37 @@ export default class YTUModule extends AutoBound
 
 		/* for (
 			let [methodName, methodFunc]
-			of (Object.entries(eventHandlers) as EntryArray<typeof eventHandlers>)
+			of (
+				Object.entries(moduleDetails.eventHandlers) as
+				GeneralTypes.EntryArray<typeof moduleDetails.eventHandlers>
+			)
 		)
 			if (typeof methodFunc === "function")
 				this.eventHandlers[methodName] = methodFunc.bind(this); */
 
 		//To late at night to deal with this.
-		//TODO: figure out why code above throws TS error
-		const BIND_TO = this;
+		//TODO: figure out why code above throws TS error.
+		//TODO also: find out why `Object.assign` bypasses type-checking.
 		Object.assign(
 			this.eventHandlers,
-			arrToObj(
+			ObjUtils.arrToObj(
 				Object.entries(moduleDetails.eventHandlers),
 				([eventHandlerName]) => eventHandlerName,
-				([_, eventHandler]) => eventHandler.bind(BIND_TO)
+				([_, eventHandler]) => eventHandler.bind(this)
 			)
 		);
 		if (moduleDetails.methods)
 			Object.assign(
 				this.methods,
-				arrToObj(
+				ObjUtils.arrToObj(
 					Object.entries(moduleDetails.methods),
 					([methodName]) => methodName,
-					([_, methodFunc]) => methodFunc.bind(BIND_TO)
+					([_, methodFunc]) => methodFunc.bind(this)
 				)
 			);
+
+		if (moduleDetails.logger)
+			this.logger = moduleDetails.logger;
 
 		if (moduleDetails.moduleName)
 			this.moduleName = moduleDetails.moduleName;

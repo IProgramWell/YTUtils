@@ -1,5 +1,5 @@
-import { GLOBAL_MANAGER } from "../config/index";
 import { getTimeString } from "../utils/DateUtils";
+import YTUModule from "../modules/YTUModule";
 
 import type {
 	IYTCustomEvent
@@ -10,7 +10,7 @@ import type {
 /**
  * Adds the total and estimated remaining time of the current playlist.
  */
-export default function initCustomPlaylistRuntimeDisplay(payload: IYTCustomEvent)
+export default function initCustomPlaylistRuntimeDisplay(this: YTUModule, payload: IYTCustomEvent)
 {
 	let playlistSeconds: { total: number; remaining: number; } = payload
 		.detail
@@ -41,7 +41,7 @@ export default function initCustomPlaylistRuntimeDisplay(payload: IYTCustomEvent
 						?.percentDurationWatched || 0,
 					remaining = total - (total * percentage / 100);
 
-				GLOBAL_MANAGER.print(
+				this.logger.print(
 					`Video "${video.playlistVideoRenderer.videoId}"`,
 					`has a remaining watch time of ${remaining} seconds`,
 					`out of ${total}.`
@@ -57,7 +57,7 @@ export default function initCustomPlaylistRuntimeDisplay(payload: IYTCustomEvent
 	let runtimeString = `Runtime: ${getTimeString(playlistSeconds.total)}`,
 		remainingString = `Estimated remaining: ${getTimeString(playlistSeconds.remaining)}`;
 
-	GLOBAL_MANAGER.print({
+	this.logger.print({
 		playlistSeconds,
 		runtimeString,
 		remainingString
@@ -76,7 +76,7 @@ export default function initCustomPlaylistRuntimeDisplay(payload: IYTCustomEvent
 			{ simpleText: runtimeString },
 			{ simpleText: remainingString }
 		);
-	GLOBAL_MANAGER.print("Added time to playlist!");
+	this.logger.print("Added time to playlist!");
 
 	return true;
 }
