@@ -5,12 +5,14 @@
   "main": "index.js",
   "scripts": {
     "build": "webpack",
-    "dev": "npm run build && serve dist"
+    "dev": "npm run build && serve dist",
+    "circ": "madge --circular --extensions js,ts --warning --ts-config ./tsconfig.json ."
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@types/webpack": "^5.28.0",
+    "madge": "^5.0.1",
     "serve": "^14.0.1",
     "terser-webpack-plugin": "^5.3.5",
     "ts-loader": "^9.3.1",

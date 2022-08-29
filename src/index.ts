@@ -1,5 +1,5 @@
-import { GLOBAL_WATCHER } from "./config";
-import { ModuleUtils } from "./modules";
+import { PathWatcher, IOManager } from "./utils";
+import { ModuleUtils, MODULES } from "./modules";
 
 import type { IYTCustomEvent } from "../types/CustomEvent";
 
@@ -14,7 +14,11 @@ import type { IYTCustomEvent } from "../types/CustomEvent";
 
 // (function main()
 // {
-GLOBAL_WATCHER.start();
+new PathWatcher(
+	MODULES,
+	IOManager.GLOBAL_MANAGER
+)
+	.start();
 
 ModuleUtils.onModuleEvent("onDocumentStart", []);
 

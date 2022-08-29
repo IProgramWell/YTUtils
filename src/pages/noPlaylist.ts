@@ -1,5 +1,5 @@
 import { getSearchParams, removeElementById } from "../utils/PageUtils";
-import { YTUModule } from "../modules";
+import YTUModule from "../modules/YTUModule";
 
 export function addNoPLControls(this: YTUModule)
 {

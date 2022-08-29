@@ -12,6 +12,24 @@ import type {
  */
 export default function initCustomPlaylistRuntimeDisplay(this: YTUModule, payload: IYTCustomEvent)
 {
+	this.logger.print(payload
+		.detail
+		.pageData
+		.response
+		.contents
+		.twoColumnBrowseResultsRenderer
+		.tabs[0]
+		.tabRenderer
+		.content
+		.sectionListRenderer
+		.contents[0]
+		.itemSectionRenderer
+		.contents[0]
+		.playlistVideoListRenderer
+		.contents
+		.length
+	);
+
 	let playlistSeconds: { total: number; remaining: number; } = payload
 		.detail
 		.pageData

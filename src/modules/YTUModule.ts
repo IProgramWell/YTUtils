@@ -1,9 +1,5 @@
-import {
-	IOManager,
-	ObjUtils
-} from "../utils";
-
-import { GLOBAL_MANAGER } from "../config/index";
+import { arrToObj, AutoBound } from "../utils/ObjUtils";
+import IOManager from "../utils/IOManager";
 
 import type {
 	GeneralTypes,
@@ -11,7 +7,7 @@ import type {
 	CustomEvent,
 } from "../../types";
 
-export default class YTUModule extends ObjUtils.AutoBound
+export default class YTUModule extends AutoBound
 {
 	/**
 	 * A collection of per module event handlers,
@@ -43,7 +39,7 @@ export default class YTUModule extends ObjUtils.AutoBound
 	pathRegex: RegExp = /\//i;
 	isActive: boolean = false;
 	moduleName: string | null | undefined = null;
-	logger: IOManager = GLOBAL_MANAGER;
+	logger: IOManager = IOManager.GLOBAL_MANAGER;
 
 	constructor (moduleDetails: {
 		eventHandlers: typeof YTUModule["prototype"]["eventHandlers"],
@@ -78,7 +74,7 @@ export default class YTUModule extends ObjUtils.AutoBound
 		//TODO also: find out why `Object.assign` bypasses type-checking.
 		Object.assign(
 			this.eventHandlers,
-			ObjUtils.arrToObj(
+			arrToObj(
 				Object.entries(moduleDetails.eventHandlers),
 				([eventHandlerName]) => eventHandlerName,
 				([_, eventHandler]) => eventHandler.bind(this)
@@ -87,7 +83,7 @@ export default class YTUModule extends ObjUtils.AutoBound
 		if (moduleDetails.methods)
 			Object.assign(
 				this.methods,
-				ObjUtils.arrToObj(
+				arrToObj(
 					Object.entries(moduleDetails.methods),
 					([methodName]) => methodName,
 					([_, methodFunc]) => methodFunc.bind(this)
