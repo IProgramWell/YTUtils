@@ -2,7 +2,8 @@ const Path = require("path"); // required for path resolution for dist folder
 const Webpack = require("webpack"); // used to access the BannerPlugin
 const TerserPlugin = require("terser-webpack-plugin");
 
-const Metadata = require("./config/meta");
+const Metadata = require("./metadata");
+
 /** @type {Webpack.Configuration["mode"]} */
 const MODE = [
 	"development",

@@ -1,5 +1,5 @@
 /**
- * @typedef {import("../types/ViolentMonkey").Metadata} Metadata
+ * @typedef {import("./types/ViolentMonkey").Metadata} Metadata
  */
 
 /** @type {Metadata} */

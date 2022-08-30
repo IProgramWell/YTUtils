@@ -10,8 +10,6 @@ import type { IYTCustomEvent } from "../types/CustomEvent";
  * 	 * "yt-page-data-fetched",
  */
 
-//TODO: Fix custom playlist stats module shitting itself if playlist is too long.
-
 // (function main()
 // {
 new PathWatcher(

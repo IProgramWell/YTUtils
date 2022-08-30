@@ -7,29 +7,12 @@ import type {
 
 //TODO: Find a way to make sure the time was added BEFORE being added to the sidebar.
 //(will probably work because the script runs first thing buuuuut...)
+//TODO also: Fix custom playlist stats module shitting itself if playlist is too long.
 /**
  * Adds the total and estimated remaining time of the current playlist.
  */
 export default function initCustomPlaylistRuntimeDisplay(this: YTUModule, payload: IYTCustomEvent)
 {
-	this.logger.print(payload
-		.detail
-		.pageData
-		.response
-		.contents
-		.twoColumnBrowseResultsRenderer
-		.tabs[0]
-		.tabRenderer
-		.content
-		.sectionListRenderer
-		.contents[0]
-		.itemSectionRenderer
-		.contents[0]
-		.playlistVideoListRenderer
-		.contents
-		.length
-	);
-
 	let playlistSeconds: { total: number; remaining: number; } = payload
 		.detail
 		.pageData
@@ -51,6 +34,8 @@ export default function initCustomPlaylistRuntimeDisplay(this: YTUModule, payloa
 				video: any
 			): typeof playlistSeconds =>
 			{
+				/* if (!video.playlistVideoRenderer)
+					return playlist; */
 				let total = Number.parseInt(video.playlistVideoRenderer.lengthSeconds),
 					percentage = video
 						.playlistVideoRenderer
@@ -58,12 +43,6 @@ export default function initCustomPlaylistRuntimeDisplay(this: YTUModule, payloa
 						?.thumbnailOverlayResumePlaybackRenderer
 						?.percentDurationWatched || 0,
 					remaining = total - (total * percentage / 100);
-
-				this.logger.print(
-					`Video "${video.playlistVideoRenderer.videoId}"`,
-					`has a remaining watch time of ${remaining} seconds`,
-					`out of ${total}.`
-				);
 
 				playlist.total += total;
 				playlist.remaining += remaining;
