@@ -40,7 +40,7 @@ module.exports = {
 			new TerserPlugin({
 				terserOptions: {
 					format: {
-						preamble: Metadata.generateMetadataBlock(MODE),
+						preamble: Metadata.generateMetadataBlock(MODE, true),
 					}
 				}
 			})

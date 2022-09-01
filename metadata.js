@@ -22,49 +22,51 @@ const METADATA_DEV = {};
 
 /**
  * @type {{
- * 	[key in keyof Metadata]?: (value: Metadata[key]) => string;
+ * 	[key in keyof Metadata]?: (value: Metadata[key], keySuffix?: string) => string;
  * }}
  */
 const TAG_TO_STRING = {
+	match: (matchArray, keySuffix) => matchArray
+		.map(match => `// @match${keySuffix ?? ""} ${match.toString()}`)
+		.join("\n"),
+	"exclude-match": (matchArray, keySuffix) => matchArray
+		.map(match => `// @exclude-match${keySuffix ?? ""} ${match.toString()}`)
+		.join("\n"),
+	require: (reqArray, keySuffix) => reqArray
+		.map(req => `// @require${keySuffix ?? ""} ${req.toString()}`)
+		.join("\n"),
+	resource: (resourceArray, keySuffix) => resourceArray
+		.map(resource => `// @resource${keySuffix ?? ""} ${resource.name} ${resource.url.toString()}`)
+		.join("\n"),
+	noframes: (noframes, keySuffix) => noframes
+		? `// @noframes${keySuffix ?? ""}`
+		: "",
+	grant: (grantArray, keySuffix) => grantArray
+		.map(grant => `// @grant${keySuffix ?? ""} ${grant}`)
+		.join("\n"),
+	unwrap: (unwrap, keySuffix) => unwrap
+		? `// @unwrap${keySuffix ?? ""}`
+		: "",
+	// Don't need a special function if all it does is echo the provided key/val pair.
 	// name: name => `// @name ${name}`,
 	// namespace: namespace => `// @namespace ${namespace}`,
-	match: matchArray => matchArray
-		.map(match => `// @match ${match.toString()}`)
-		.join("\n"),
-	"exclude-match": matchArray => matchArray
-		.map(match => `// @match ${match.toString()}`)
-		.join("\n"),
 	// version: ver => `// @version ${ver}`,
 	// description: desc => `// @description ${desc}`,
 	// icon: icon => `// @icon ${icon.toString()}`,
-	require: reqArray => reqArray
-		.map(req => `// @require ${req.toString()}`)
-		.join("\n"),
-	resource: resourceArray => resourceArray
-		.map(resource => `// @resource ${resource.name} ${resource.url.toString()}`)
-		.join("\n"),
 	// "run-at": runAt => `// @run-at ${runAt}`,
-	noframes: noframes => noframes
-		? `// @noframes`
-		: "",
-	grant: grantArray => grantArray
-		.map(grant => `// @grant ${grant}`)
-		.join("\n"),
 	// "inject-into": inject => `// @inject-into ${inject}`,
 	// downloadURL: dlUrl => `// @downloadURL ${dlUrl.toString()}`,
 	// supportURL: supUrl => `// @supportURL ${supUrl.toString()}`,
 	// homepageURL: hpUrl => `// @homepageURL ${hpUrl.toString()}`,
-	unwrap: unwrap => unwrap
-		? `// @unwrap`
-		: "",
 };
 
 /**
  * 
- * @param {import("webpack").Configuration["mode"]} [mode]
+ * @param {import("webpack").Configuration["mode"]} [mode] 
+ * @param {boolean} [spaceEvently] 
  * @returns {string}
  */
-function generateMetadataBlock(mode = "production")
+function generateMetadataBlock(mode = "production", spaceEvently = true)
 {
 	/** @type {string[]} */
 	const MetadataSegments = [];
@@ -93,14 +95,32 @@ function generateMetadataBlock(mode = "production")
 			break;
 	}
 
+	let maxKeyLength = Object
+		.keys(metadata)
+		.reduce(
+			(max, key) =>
+				Math.max(max, key.length),
+			0
+		),
+		keySuffix;
+
 	for (let key in metadata)
 	{
-		if (metadata[key])
-		{
-			currentValue = TAG_TO_STRING[key]?.(metadata[key]) ?? `// @${key} ${metadata[key]}`;
-			if (currentValue)
-				MetadataSegments.push(currentValue);
-		}
+		keySuffix = spaceEvently
+			? " ".repeat(maxKeyLength - key.length)
+			: "";
+
+		currentValue = (
+			TAG_TO_STRING[key]?.(
+				metadata[key],
+				keySuffix
+			) ??
+			`// @${key}${keySuffix} ${metadata[key]}`
+		)
+			.trim();
+
+		if (currentValue)
+			MetadataSegments.push(currentValue);
 	}
 
 	return `// ==UserScript==

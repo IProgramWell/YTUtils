@@ -1,12 +1,12 @@
 // ==UserScript==
-// @name YT Utils
-// @namespace Violentmonkey Scripts
-// @match https://www.youtube.com/**
-// @grant none
-// @version 1.5.1
-// @author -
+// @name        YT Utils
+// @namespace   Violentmonkey Scripts
+// @match       https://www.youtube.com/**
+// @grant       none
+// @version     1.5.1
+// @author      -
 // @inject-into page
-// @run-at document-start
+// @run-at      document-start
 // @description Useful YouTube utilities.
 // @downloadURL https://raw.githubusercontent.com/IProgramWell/YTUtils/master/dist/YTUtils.user.js
 // ==/UserScript==
