@@ -13,6 +13,7 @@ const METADATA_COMMON = {
 	"inject-into": "page",
 	"run-at": "document-start",
 	description: "Useful YouTube utilities.",
+	homepageURL: "https://github.com/IProgramWell/YTUtils",
 };
 /** @type {Metadata} */
 const METADATA_PROD = {
