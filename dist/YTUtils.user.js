@@ -3,7 +3,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       https://www.youtube.com/**
 // @grant       none
-// @version     1.5.1
+// @version     1.5.2
 // @author      -
 // @inject-into page
 // @run-at      document-start
