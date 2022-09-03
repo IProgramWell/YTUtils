@@ -1,10 +1,9 @@
 import { arrToObj } from "./ObjUtils";
 
-export function getSearchParams(): { [searchParam: string]: string }
+export function getSearchParams(url: URL | Location = document.location): { [searchParam: string]: string }
 {
 	return arrToObj(
-		document
-			.location
+		url
 			.search
 			.substring(1)
 			.split("&"),

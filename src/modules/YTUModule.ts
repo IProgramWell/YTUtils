@@ -36,7 +36,7 @@ export default class YTUModule extends AutoBound
 		[methodName: PropertyKey]: (...args: any) => any
 	} = {};
 	state: GeneralTypes.TypedObject = {};
-	pathRegex: RegExp = /\//i;
+	shouldBeActive: (url: string | URL | Location) => boolean = () => true;
 	isActive: boolean = false;
 	moduleName: string | null | undefined = null;
 	logger: IOManager = IOManager.GLOBAL_MANAGER;
@@ -44,7 +44,7 @@ export default class YTUModule extends AutoBound
 	constructor (moduleDetails: {
 		eventHandlers: typeof YTUModule["prototype"]["eventHandlers"],
 		methods?: typeof YTUModule["prototype"]["methods"],
-		pathRegex: string | RegExp,
+		shouldBeActive: typeof YTUModule["prototype"]["shouldBeActive"],
 		moduleName?: string,
 		logger?: IOManager,
 	})
@@ -52,10 +52,8 @@ export default class YTUModule extends AutoBound
 
 		super();
 
-		if (moduleDetails.pathRegex)
-			this.pathRegex = typeof moduleDetails.pathRegex === "string"
-				? new RegExp(moduleDetails.pathRegex)
-				: moduleDetails.pathRegex;
+		if (moduleDetails.shouldBeActive)
+			this.shouldBeActive = moduleDetails.shouldBeActive.bind(this);
 		else
 			throw new Error("Path regex not specified");
 

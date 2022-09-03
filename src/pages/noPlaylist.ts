@@ -3,9 +3,6 @@ import YTUModule from "../modules/YTUModule";
 
 export function addNoPLControls(this: YTUModule)
 {
-	//If the current video is NOT played from a playlist, do nothing.
-	if (!getSearchParams().list)
-		return false;
 	const centered = "float: left; top: 50%; white-space: nowrap;";
 	const newTabCheckboxID = "ytutils-noplaylist-newtabcheckbox";
 	const noPLButtonID = "yt-utils-noplaylist-noplbtn";
@@ -69,4 +66,17 @@ export function removeNoPLControls(this: YTUModule)
 	removeElementById(this.getStateValue?.("noPLButtonID", null));
 
 	return false;
+}
+
+export function shouldBeActiveFor(this: YTUModule, url: string | URL | Location): boolean
+{
+	const TEST_URL = typeof url === "string"
+		? new URL(url)
+		: url;
+
+	return (
+		TEST_URL.pathname === "/watch" &&
+		//If the current video is NOT played from a playlist, do nothing.
+		!!getSearchParams(TEST_URL).list
+	);
 }

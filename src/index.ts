@@ -14,20 +14,21 @@ import type { IYTCustomEvent } from "../types/CustomEvent";
 // {
 new PathWatcher(
 	MODULES,
-	IOManager.GLOBAL_MANAGER
+	IOManager.GLOBAL_MANAGER,
+	true
 )
 	.start();
 
-ModuleUtils.onModuleEvent("onDocumentStart", []);
+ModuleUtils.onModuleEvent(MODULES, "onDocumentStart", []);
 
 globalThis.addEventListener(
 	"yt-page-data-fetched",
 	(payload: IYTCustomEvent) =>
-		ModuleUtils.onModuleEvent("onPageDataFetch", [payload])
+		ModuleUtils.onModuleEvent(MODULES, "onPageDataFetch", [payload])
 );
 
 globalThis.addEventListener(
 	"load",
-	() => ModuleUtils.onModuleEvent("onDocumentLoad", [])
+	() => ModuleUtils.onModuleEvent(MODULES, "onDocumentLoad", [])
 );
 // })();

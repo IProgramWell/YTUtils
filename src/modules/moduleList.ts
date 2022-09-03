@@ -5,6 +5,7 @@ import
 	noPlaylist
 } from "../pages";
 import YTUModule from "./YTUModule";
+import { activateForRegex } from "./moduleUtils";
 
 export default [
 	new YTUModule({
@@ -12,14 +13,14 @@ export default [
 			// onDocumentStart: noShortsOnURLChange,
 			onModuleStart: noShortsOnURLChange,
 		},
-		pathRegex: /^\/shorts\/.*\/?$/i,
+		shouldBeActive: activateForRegex(/^\/shorts\/.*\/?$/i),
 		moduleName: "No Shorts Redirector"
 	}),
 	new YTUModule({
 		eventHandlers: {
 			onPageDataFetch: initCustomPlaylistRuntimeDisplay,
 		},
-		pathRegex: /^\/playlist\/?$/i,
+		shouldBeActive: activateForRegex(/^\/playlist\/?$/i),
 		moduleName: "Custom Playlist Statistics"
 	}),
 	new YTUModule({
@@ -28,7 +29,7 @@ export default [
 			onModuleStart: noPlaylist.addNoPLControls,
 			onModuleStop: noPlaylist.removeNoPLControls,
 		},
-		pathRegex: /^\/watch\/?$/i,
+		shouldBeActive: noPlaylist.shouldBeActiveFor,
 		moduleName: "No Playlist Controls"
 	}),
 ];
