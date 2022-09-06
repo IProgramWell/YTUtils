@@ -1,9 +1,10 @@
-import { getTimeString } from "../utils/DateUtils";
-import YTUModule from "../modules/YTUModule";
+import { DateUtils, PageUtils } from "../utils/index";
 
+import type YTUModule from "../modules/YTUModule";
 import type {
 	IYTCustomEvent
 } from "../../types/CustomEvent";
+import { TagMap } from "../../types/Component";
 
 //TODO: Find a way to make sure the time was added BEFORE being added to the sidebar.
 //(will probably work because the script runs first thing buuuuut...)
@@ -51,8 +52,8 @@ export default function initCustomPlaylistRuntimeDisplay(this: YTUModule, payloa
 			{ total: 0, remaining: 0, }
 		)
 
-	let runtimeString = `Runtime: ${getTimeString(playlistSeconds.total)}`,
-		remainingString = `Estimated remaining: ${getTimeString(playlistSeconds.remaining)}`;
+	let runtimeString = `Runtime: ${DateUtils.getTimeString(playlistSeconds.total)}`,
+		remainingString = `Estimated remaining: ${DateUtils.getTimeString(playlistSeconds.remaining)}`;
 
 	this.logger.print({
 		playlistSeconds,
@@ -84,20 +85,22 @@ export function addTimeManually(timeString: string, checkFirst = true): boolean
 	{
 		const STATS_BLOCK = document.getElementById("stats");
 
-		if (!STATS_BLOCK)
+		if (
+			!STATS_BLOCK ||
+			(
+				checkFirst &&
+				STATS_BLOCK.innerText.includes(timeString)
+			)
+		)
 			return false;
 
-		if (checkFirst && STATS_BLOCK.innerText.includes(timeString))
-			return true;
-
-		STATS_BLOCK
-			.appendChild(Object.assign(
-				document.createElement("yt-formatted-string"),
-				{
-					className: "style-scope ytd-playlist-sidebar-primary-info-renderer",
-				}
-			))
-			.innerText = timeString;
+		STATS_BLOCK.append(PageUtils.elementize([
+			"yt-formatted-string" as keyof TagMap,
+			{
+				className: "style-scope ytd-playlist-sidebar-primary-info-renderer",
+				innerText: timeString
+			},
+		]));
 
 		return true;
 	}

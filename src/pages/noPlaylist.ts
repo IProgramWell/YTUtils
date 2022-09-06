@@ -1,5 +1,7 @@
-import { getSearchParams, removeElementById } from "../utils/PageUtils";
-import YTUModule from "../modules/YTUModule";
+import { PageUtils } from "../utils/index";
+
+import type YTUModule from "../modules/YTUModule";
+import type { Component } from "../../types/Component";
 
 export function addNoPLControls(this: YTUModule)
 {
@@ -9,34 +11,33 @@ export function addNoPLControls(this: YTUModule)
 	this.setStateValue?.("newTabCheckboxID", newTabCheckboxID);
 	this.setStateValue?.("noPLButtonID", noPLButtonID);
 
-	const newTabCheckbox = Object.assign(
-		document.createElement("input"),
+	const newTabCheckbox: Component = [
+		"input",
 		{
 			type: "checkbox",
 			id: newTabCheckboxID,
-			style: `${centered} transform: translateY(50%);`,
+			style: `${centered} transform: translateY(50%)`,
 			name: newTabCheckboxID,
 			title: "Open in new tab",
-			"aria-label": "Open in new tab",
-		}
-	);
-	/* const newtabcheckboxLabel = Object.assign(
-		document.createElement("label"),
+		},
+	];
+	const newtabcheckboxLabel: Component = [
+		"label",
 		{
-			for: newTabCheckboxID,
-			innerHTML: "New tab?"
+			htmlFor: newTabCheckboxID,
+			innerHTML: "New tab?",
+			style: centered
 		}
-	); */
-	const redirectButton = Object.assign(
-		document.createElement("button"),
+	];
+	const redirectButton: Component = [
+		"button",
 		{
 			// className: "ytp-button",
 			id: noPLButtonID,
 			title: "Watch outside playlist",
-			"aria-label": "Watch outside playlist",
 			onclick: () =>
 			{
-				let searchParams = getSearchParams();
+				let searchParams = PageUtils.getSearchParams();
 				if ((document.getElementById(newTabCheckboxID) as HTMLInputElement)?.checked)
 					if (globalThis.GM_openInTab)
 						GM_openInTab(`https://youtube.com/watch?v=${searchParams.v}`)
@@ -48,22 +49,25 @@ export function addNoPLControls(this: YTUModule)
 			innerHTML: "No Playlist",
 			style: centered,
 		}
-	);
-	document
-		.querySelector(".ytp-right-controls")
-		?.prepend(
+	];
+
+	PageUtils.render(
+		document.querySelector(".ytp-right-controls"),
+		[
 			newTabCheckbox,
-			// newtabcheckboxLabel,
-			redirectButton,
-		);
+			newtabcheckboxLabel,
+			redirectButton
+		],
+		"start"
+	);
 
 	return true;
 }
 
 export function removeNoPLControls(this: YTUModule)
 {
-	removeElementById(this.getStateValue?.("newTabCheckboxID", null));
-	removeElementById(this.getStateValue?.("noPLButtonID", null));
+	PageUtils.removeElementById(this.getStateValue?.("newTabCheckboxID", null));
+	PageUtils.removeElementById(this.getStateValue?.("noPLButtonID", null));
 
 	return false;
 }
@@ -77,6 +81,6 @@ export function shouldBeActiveFor(this: YTUModule, url: string | URL | Location)
 	return (
 		TEST_URL.pathname === "/watch" &&
 		//If the current video is NOT played from a playlist, do nothing.
-		!!getSearchParams(TEST_URL).list
+		!!PageUtils.getSearchParams(TEST_URL).list
 	);
 }
