@@ -1,5 +1,7 @@
 import { arrToObj, AutoBound } from "../utils/ObjUtils";
 import IOManager from "../utils/IOManager";
+import * as URLUtils from "../utils/URLUtils";
+import * as PageUtils from "../utils/PageUtils";
 
 import type {
 	GeneralTypes,
@@ -7,7 +9,7 @@ import type {
 	CustomEvent,
 } from "../../types";
 
-export default class YTUModule extends AutoBound
+export class YTUModule extends AutoBound
 {
 	/**
 	 * A collection of per module event handlers,
@@ -36,14 +38,22 @@ export default class YTUModule extends AutoBound
 		[methodName: PropertyKey]: (...args: any) => any
 	} = {};
 	state: GeneralTypes.TypedObject = {};
-	shouldBeActive: (url: string | URL | Location) => boolean = () => true;
+	shouldBeActive: (url?: string | URL | Location) => boolean = () => true;
 	isActive: boolean = false;
 	moduleName: string | null | undefined = null;
 	logger: IOManager = IOManager.GLOBAL_MANAGER;
+	utils: {
+		urlUtils: typeof URLUtils,
+		pageUtils: typeof PageUtils,
+	} = {
+			urlUtils: URLUtils,
+			pageUtils: PageUtils,
+		};
 
 	constructor (moduleDetails: {
 		eventHandlers: typeof YTUModule["prototype"]["eventHandlers"],
 		methods?: typeof YTUModule["prototype"]["methods"],
+		utils?: typeof YTUModule["prototype"]["utils"],
 		shouldBeActive: typeof YTUModule["prototype"]["shouldBeActive"],
 		moduleName?: string,
 		logger?: IOManager,
@@ -93,6 +103,9 @@ export default class YTUModule extends AutoBound
 
 		if (moduleDetails.moduleName)
 			this.moduleName = moduleDetails.moduleName;
+
+		if (moduleDetails.utils)
+			this.utils = moduleDetails.utils;
 	}
 
 	getStateValue<T>(name: keyof YTUModule["prototype"]["state"], defaultValue: T = null): T | null | undefined
@@ -105,3 +118,4 @@ export default class YTUModule extends AutoBound
 		this.state[name] = value;
 	}
 }
+export default YTUModule;

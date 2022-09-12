@@ -1,10 +1,9 @@
-import { DateUtils, PageUtils } from "../utils/index";
+import { DateUtils } from "../utils/index";
 
 import type YTUModule from "../modules/YTUModule";
 import type {
 	IYTCustomEvent
 } from "../../types/CustomEvent";
-import { TagMap } from "../../types/Component";
 
 //TODO: Find a way to make sure the time was added BEFORE being added to the sidebar.
 //(will probably work because the script runs first thing buuuuut...)
@@ -77,35 +76,4 @@ export default function initCustomPlaylistRuntimeDisplay(this: YTUModule, payloa
 	this.logger.print("Added time to playlist!");
 
 	return true;
-}
-
-export function addTimeManually(timeString: string, checkFirst = true): boolean
-{
-	try
-	{
-		const STATS_BLOCK = document.getElementById("stats");
-
-		if (
-			!STATS_BLOCK ||
-			(
-				checkFirst &&
-				STATS_BLOCK.innerText.includes(timeString)
-			)
-		)
-			return false;
-
-		STATS_BLOCK.append(PageUtils.elementize([
-			"yt-formatted-string" as keyof TagMap,
-			{
-				className: "style-scope ytd-playlist-sidebar-primary-info-renderer",
-				innerText: timeString
-			},
-		]));
-
-		return true;
-	}
-	catch (_)
-	{
-		return false;
-	}
 }

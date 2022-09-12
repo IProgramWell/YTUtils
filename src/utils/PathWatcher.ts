@@ -3,6 +3,7 @@ import IOManager from "./IOManager";
 
 import type YTUModule from "../modules/YTUModule";
 
+// TODO: Figure out how to pass a urlUtils type of object for testing.
 export default class PathWatcher extends AutoBound
 {
 	observerInstance: MutationObserver;

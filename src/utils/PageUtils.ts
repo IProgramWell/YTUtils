@@ -2,6 +2,16 @@ import { arrToObj } from "./ObjUtils";
 
 import type { Component } from "../../types/Component";
 
+export function queryElement<R extends Element = Element>(query: string): R | null
+{
+	return document.querySelector<R>(query);
+}
+
+export function queryAllElements<R extends Element = Element>(query: string): NodeListOf<R>
+{
+	return document.querySelectorAll<R>(query);
+}
+
 export function getSearchParams(url: URL | Location = document.location): { [searchParam: string]: string }
 {
 	return arrToObj(

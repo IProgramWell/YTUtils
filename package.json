@@ -1,12 +1,14 @@
 {
   "name": "ytutils",
-  "version": "1.5.4",
+  "version": "1.5.5",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "webpack",
+    "build": "npm i && npm run test && webpack",
     "dev": "npm run build && serve dist",
-    "circ": "madge --circular --extensions js,ts --warning --ts-config ./tsconfig.json ."
+    "test": "",
+    "circ": "madge --circular --extensions js,ts --warning --ts-config ./tsconfig.json .",
+    "tc": "echo \"Running type checks...\" && tsc --noEmit && echo \"Done!\""
   },
   "author": "",
   "license": "ISC",

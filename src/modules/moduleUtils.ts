@@ -12,7 +12,7 @@ export function onModuleEvent<
 {
 	for (let module of moduleList)
 		if (
-			module.shouldBeActive(document.location) &&
+			module.shouldBeActive() &&
 			module.eventHandlers[eventHandlerName] &&
 			typeof module.eventHandlers[eventHandlerName] === "function"
 		)
@@ -34,12 +34,16 @@ export function activateForRegex(
 		: regex;
 	return function (
 		this: YTUModule,
-		url: URL | string | Location = document.location
+		url?: URL | string | Location
 	): boolean
 	{
-		const TEST_URL = typeof url === "string"
-			? new URL(url)
-			: url;
+		const TEST_URL = url
+			? (typeof url === "string"
+				? new URL(url)
+				: url
+			)
+			: this.utils.urlUtils.getCurrentLocation();
+
 		return ACTIVATE_REGEXP.test(wholeUrl
 			? TEST_URL.href
 			: TEST_URL.pathname

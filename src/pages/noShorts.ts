@@ -1,7 +1,12 @@
-export default function noShortsOnURLChange()
+export default function noShortsOnURLChange(this: import("../modules/YTUModule").YTUModule)
 {
-	const [, section, shortsID] = document.location.pathname.split("/");
+	const [, section, shortsID] = this
+		.urlUtils
+		.getCurrentLocation()
+		.pathname
+		.split("/");
+
 	if (section === "shorts")
-		document.location.href = `https://youtube.com/watch?v=${shortsID}`;
+		this.utils.urlUtils.navigate(`https://youtube.com/watch?v=${shortsID}`);
 	return true;
 };

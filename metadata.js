@@ -8,7 +8,7 @@ const METADATA_COMMON = {
 	namespace: "Violentmonkey Scripts",
 	match: ["https://www.youtube.com/**"],
 	grant: ["none"],
-	version: "1.5.4",
+	version: "1.5.5",
 	author: "-",
 	"inject-into": "page",
 	"run-at": "document-start",

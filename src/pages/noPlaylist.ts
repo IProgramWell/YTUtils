@@ -1,10 +1,9 @@
-import { PageUtils } from "../utils/index";
-
 import type YTUModule from "../modules/YTUModule";
 import type { Component } from "../../types/Component";
 
 export function addNoPLControls(this: YTUModule)
 {
+	const { urlUtils, pageUtils } = this.utils;
 	const centered = "float: left; top: 50%; white-space: nowrap;";
 	const newTabCheckboxID = "ytutils-noplaylist-newtabcheckbox";
 	const newTabCheckboxLabelID = "ytutils-noplaylist-newtabcheckbox-label"
@@ -40,22 +39,19 @@ export function addNoPLControls(this: YTUModule)
 			title: "Watch outside playlist",
 			onclick: () =>
 			{
-				let searchParams = PageUtils.getSearchParams();
-				if ((document.getElementById(newTabCheckboxID) as HTMLInputElement)?.checked)
-					if (globalThis.GM_openInTab)
-						GM_openInTab(`https://youtube.com/watch?v=${searchParams.v}`)
-					else
-						globalThis.open(`https://youtube.com/watch?v=${searchParams.v}`, "_blank")
+				let searchParams = pageUtils.getSearchParams();
+				if (pageUtils.queryElement<HTMLInputElement>(`#${newTabCheckboxID}`)?.checked)
+					urlUtils.openNewTab(`https://youtube.com/watch?v=${searchParams.v}`);
 				else
-					document.location.search = `?v=${searchParams.v}`
+					urlUtils.setLocationAttribute("search", `?v=${searchParams.v}`);
 			},
 			innerHTML: "No Playlist",
 			style: centered,
 		}
 	];
 
-	PageUtils.render(
-		document.querySelector(".ytp-right-controls"),
+	pageUtils.render(
+		pageUtils.queryElement(".ytp-right-controls"),
 		[
 			newTabCheckbox,
 			newtabcheckboxLabel,
@@ -75,21 +71,24 @@ export function removeNoPLControls(this: YTUModule)
 		"newTabCheckboxLabelID"
 	])
 	{
-		PageUtils.removeElementById(this.getStateValue?.(id, null));
+		this.utils.pageUtils.removeElementById(this.getStateValue?.(id, null));
 	}
 
 	return false;
 }
 
-export function shouldBeActiveFor(this: YTUModule, url: string | URL | Location): boolean
+export function shouldBeActiveFor(this: YTUModule, url?: string | URL | Location): boolean
 {
-	const TEST_URL = typeof url === "string"
-		? new URL(url)
-		: url;
+	const TEST_URL = url
+		? (typeof url === "string"
+			? new URL(url)
+			: url
+		)
+		: this.utils.urlUtils.getCurrentLocation();
 
 	return (
 		TEST_URL.pathname === "/watch" &&
 		//If the current video is NOT played from a playlist, do nothing.
-		!!PageUtils.getSearchParams(TEST_URL).list
+		!!this.utils.pageUtils.getSearchParams(TEST_URL).list
 	);
 }
