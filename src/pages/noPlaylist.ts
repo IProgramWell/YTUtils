@@ -7,9 +7,11 @@ export function addNoPLControls(this: YTUModule)
 {
 	const centered = "float: left; top: 50%; white-space: nowrap;";
 	const newTabCheckboxID = "ytutils-noplaylist-newtabcheckbox";
-	const noPLButtonID = "yt-utils-noplaylist-noplbtn";
+	const newTabCheckboxLabelID = "ytutils-noplaylist-newtabcheckbox-label"
+	const noPLButtonID = "ytutils-noplaylist-noplbtn";
 	this.setStateValue?.("newTabCheckboxID", newTabCheckboxID);
 	this.setStateValue?.("noPLButtonID", noPLButtonID);
+	this.setStateValue?.("newTabCheckboxLabelID", newTabCheckboxLabelID);
 
 	const newTabCheckbox: Component = [
 		"input",
@@ -26,7 +28,8 @@ export function addNoPLControls(this: YTUModule)
 		{
 			htmlFor: newTabCheckboxID,
 			innerHTML: "New tab?",
-			style: centered
+			style: centered,
+			id: newTabCheckboxLabelID,
 		}
 	];
 	const redirectButton: Component = [
@@ -66,8 +69,14 @@ export function addNoPLControls(this: YTUModule)
 
 export function removeNoPLControls(this: YTUModule)
 {
-	PageUtils.removeElementById(this.getStateValue?.("newTabCheckboxID", null));
-	PageUtils.removeElementById(this.getStateValue?.("noPLButtonID", null));
+	for (let id of [
+		"noPLButtonID",
+		"newTabCheckboxID",
+		"newTabCheckboxLabelID"
+	])
+	{
+		PageUtils.removeElementById(this.getStateValue?.(id, null));
+	}
 
 	return false;
 }
