@@ -18,7 +18,7 @@ export class YTUModule extends AutoBound
 	 * indicating whether the current module is active or not.
 	 * 
 	 */
-	eventHandlers: {
+	readonly eventHandlers: {
 		init?: ModuleTypes.ModuleEventHandler;
 		onDocumentLoad?: ModuleTypes.ModuleEventHandler;
 		/**
@@ -29,21 +29,22 @@ export class YTUModule extends AutoBound
 		onModuleStart?: ModuleTypes.ModuleEventHandler;
 		onModuleStop?: ModuleTypes.ModuleEventHandler;
 	} = {};
-	methods: {
+	readonly methods: {
 		[methodName: PropertyKey]: (...args: any) => any
 	} = {};
-	state: GeneralTypes.TypedObject = {};
-	shouldBeActive: (url?: string | URL | Location) => boolean = () => true;
-	isActive: boolean = false;
-	moduleName: string | null | undefined = null;
-	logger: IOManager = IOManager.GLOBAL_MANAGER;
-	utils: {
+	readonly shouldBeActive: (url?: string | URL | Location) => boolean = () => true;
+	readonly moduleName: string | null | undefined = null;
+	readonly logger: IOManager = IOManager.GLOBAL_MANAGER;
+	readonly utils: {
 		urlUtils: typeof URLUtils,
 		pageUtils: typeof PageUtils,
 	} = {
 			urlUtils: URLUtils,
 			pageUtils: PageUtils,
 		};
+
+	state: Record<PropertyKey, any> = {};
+	isActive: boolean = false;
 
 	constructor (moduleDetails: {
 		eventHandlers?: YTUModule["eventHandlers"],

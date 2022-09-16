@@ -2,10 +2,7 @@
 export interface TagMap extends HTMLElementTagNameMap { }
 
 export type AttributeMap<TagName extends keyof TagMap = keyof TagMap> = {
-	[TK in keyof TagMap[TagName]]:
-	/* TagMap[TagName][TK] extends (...args: any) => any
-	? never
-	:  */TagMap[TagName][TK] extends object
+	[TK in keyof TagMap[TagName]]: TagMap[TagName][TK] extends object
 	? Partial<TagMap[TagName][TK]>
 	: TagMap[TagName][TK]
 } & {
@@ -17,3 +14,4 @@ export type Component<TagName extends keyof TagMap = keyof TagMap> = [
 	attributes: Partial<AttributeMap<TagName>> | {} | null | undefined,
 	...children: (string | HTMLElement | Component<keyof TagMap>)[]
 ];
+export default Component;
