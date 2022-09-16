@@ -1,9 +1,26 @@
 import { AutoBound } from "./ObjUtils";
 import IOManager from "./IOManager";
+import { getCurrentLocation } from "./URLUtils";
+import { onUrlChange } from "../modules/moduleUtils";
 
 import type YTUModule from "../modules/YTUModule";
 
-// TODO: Figure out how to pass a urlUtils type of object for testing.
+/*
+ * Will probably not test because this relies on a MutationObserver instance.
+ * Unless I find a way to mock/fake the observer.
+ */
+// TODO: Find away to mock the change detection.
+const DEFAULT_CTOR_OPTIONS: {
+	moduleList: YTUModule[],
+	logger: IOManager,
+	watchWholeURL: boolean,
+	onUrlChange: typeof onUrlChange,
+} = {
+	moduleList: [],
+	logger: IOManager.GLOBAL_MANAGER,
+	watchWholeURL: false,
+	onUrlChange
+};
 export default class PathWatcher extends AutoBound
 {
 	observerInstance: MutationObserver;
@@ -11,16 +28,25 @@ export default class PathWatcher extends AutoBound
 	logger: IOManager;
 	moduleList: YTUModule[];
 	watchWholeURL: boolean = false;
+	urlChangeHandler: typeof onUrlChange;
 
-	constructor (moduleList: YTUModule[], logger = IOManager.GLOBAL_MANAGER, wholePath: boolean = false)
+	constructor (
+		options: typeof DEFAULT_CTOR_OPTIONS = DEFAULT_CTOR_OPTIONS
+	)
 	{
+		options = {
+			...DEFAULT_CTOR_OPTIONS,
+			...options,
+		};
+
 		super();
 
 		this.lastURL = "";
 		this.observerInstance = new MutationObserver(this.onUrlChange);
-		this.logger = logger;
-		this.moduleList = moduleList;
-		this.watchWholeURL = wholePath;
+		this.logger = options.logger;
+		this.moduleList = options.moduleList;
+		this.watchWholeURL = options.watchWholeURL;
+		this.urlChangeHandler = options.onUrlChange.bind(this);
 	}
 
 	onUrlChange()
@@ -38,32 +64,11 @@ export default class PathWatcher extends AutoBound
 				"Changed url!",
 				`New ${this.watchWholeURL ? "url" : "pathname"}: "${url}"`
 			);
-
-		let shouldBeActive: boolean;
-		for (let module of this.moduleList)
-		{
-			shouldBeActive = module.shouldBeActive(document.location);
-			if (
-				module.isActive &&
-				!shouldBeActive &&
-				module.eventHandlers.onModuleStop
-			)
-			{
-				module.isActive = (module.eventHandlers.onModuleStop?.() as boolean) ?? false;
-				if (!module.isActive)
-					this.logger.print(`Stopped module: "${module.moduleName}"`);
-			}
-			else if (
-				!module.isActive &&
-				shouldBeActive &&
-				module.eventHandlers.onModuleStart
-			)
-			{
-				module.isActive = (module.eventHandlers.onModuleStart?.() as boolean) ?? true;
-				if (module.isActive)
-					this.logger.print(`Started module: "${module.moduleName}"`);
-			}
-		}
+		this.urlChangeHandler({
+			moduleList: this.moduleList,
+			currentLocation: getCurrentLocation(),
+			logger: this.logger,
+		});
 	}
 
 	start()

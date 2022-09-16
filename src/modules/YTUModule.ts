@@ -1,4 +1,4 @@
-import { arrToObj, AutoBound } from "../utils/ObjUtils";
+import { AutoBound } from "../utils/ObjUtils";
 import IOManager from "../utils/IOManager";
 import * as URLUtils from "../utils/URLUtils";
 import * as PageUtils from "../utils/PageUtils";
@@ -6,7 +6,6 @@ import * as PageUtils from "../utils/PageUtils";
 import type {
 	GeneralTypes,
 	ModuleTypes,
-	CustomEvent,
 } from "../../types";
 
 export class YTUModule extends AutoBound
@@ -23,16 +22,12 @@ export class YTUModule extends AutoBound
 		init?: ModuleTypes.ModuleEventHandler;
 		onDocumentLoad?: ModuleTypes.ModuleEventHandler;
 		/**
-		 * Technically useless because onModuleStart
+		 * Technically useless because `onModuleStart`
 		 * runs when the document is started, too.
 		 */
 		onDocumentStart?: ModuleTypes.ModuleEventHandler;
 		onModuleStart?: ModuleTypes.ModuleEventHandler;
 		onModuleStop?: ModuleTypes.ModuleEventHandler;
-		/**
-		 * Called when the "yt-page-data-fetched" is fired.
-		 */
-		onPageDataFetch?: ModuleTypes.ModuleEventHandler<[CustomEvent.IYTCustomEvent]>;
 	} = {};
 	methods: {
 		[methodName: PropertyKey]: (...args: any) => any
@@ -51,10 +46,10 @@ export class YTUModule extends AutoBound
 		};
 
 	constructor (moduleDetails: {
-		eventHandlers: typeof YTUModule["prototype"]["eventHandlers"],
-		methods?: typeof YTUModule["prototype"]["methods"],
-		utils?: typeof YTUModule["prototype"]["utils"],
-		shouldBeActive: typeof YTUModule["prototype"]["shouldBeActive"],
+		eventHandlers?: YTUModule["eventHandlers"],
+		methods?: YTUModule["methods"],
+		utils?: YTUModule["utils"],
+		shouldBeActive?: YTUModule["shouldBeActive"],
 		moduleName?: string,
 		logger?: IOManager,
 	})
@@ -67,36 +62,62 @@ export class YTUModule extends AutoBound
 		else
 			throw new Error("Path regex not specified");
 
-		/* for (
-			let [methodName, methodFunc]
-			of (
-				Object.entries(moduleDetails.eventHandlers) as
-				GeneralTypes.EntryArray<typeof moduleDetails.eventHandlers>
+		if (moduleDetails.eventHandlers)
+		{
+			/* Object.assign(
+				this.eventHandlers,
+				arrToObj(
+					Object.entries(moduleDetails.eventHandlers),
+					([eventHandlerName]) => eventHandlerName,
+					([_, eventHandler]) => eventHandler.bind(this)
+				)
+			); */
+			for (
+				let [methodName, methodFunc]
+				of (
+					Object.entries(moduleDetails.eventHandlers) as
+					GeneralTypes.EntryArray<YTUModule["eventHandlers"]>
+				)
 			)
-		)
-			if (typeof methodFunc === "function")
-				this.eventHandlers[methodName] = methodFunc.bind(this); */
-
-		//To late at night to deal with this.
-		//TODO: figure out why code above throws TS error.
-		//TODO also: find out why `Object.assign` bypasses type-checking.
-		Object.assign(
-			this.eventHandlers,
-			arrToObj(
-				Object.entries(moduleDetails.eventHandlers),
-				([eventHandlerName]) => eventHandlerName,
-				([_, eventHandler]) => eventHandler.bind(this)
-			)
-		);
+			{
+				if (typeof methodFunc === "function")
+				{
+					(
+						this.eventHandlers[methodName] as
+						YTUModule["eventHandlers"][typeof methodName]
+					)
+						= methodFunc.bind(this);
+				}
+			}
+		}
 		if (moduleDetails.methods)
-			Object.assign(
+		{
+			/* Object.assign(
 				this.methods,
 				arrToObj(
 					Object.entries(moduleDetails.methods),
 					([methodName]) => methodName,
 					([_, methodFunc]) => methodFunc.bind(this)
 				)
-			);
+			); */
+			for (
+				let [methodName, methodFunc]
+				of (
+					Object.entries(moduleDetails.methods) as
+					GeneralTypes.EntryArray<YTUModule["methods"]>
+				)
+			)
+			{
+				if (typeof methodFunc === "function")
+				{
+					(
+						this.methods[methodName] as
+						YTUModule["methods"][typeof methodName]
+					)
+						= methodFunc.bind(this);
+				}
+			}
+		}
 
 		if (moduleDetails.logger)
 			this.logger = moduleDetails.logger;

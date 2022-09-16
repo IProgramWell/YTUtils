@@ -3,32 +3,38 @@ import { ModuleUtils, MODULES } from "./modules";
 
 import type { IYTCustomEvent } from "../types/CustomEvent";
 
-/*
- * Notes:
- * - Potentially useful YT events:
- * 	 * "yt-navigate-finish",
- * 	 * "yt-page-data-fetched",
- */
-
-// (function main()
-// {
-new PathWatcher(
-	MODULES,
-	IOManager.GLOBAL_MANAGER,
-	true
-)
+new PathWatcher({
+	moduleList: MODULES,
+	logger: IOManager.GLOBAL_MANAGER,
+	watchWholeURL: true,
+	onUrlChange: ModuleUtils.onUrlChange,
+})
 	.start();
 
-ModuleUtils.onModuleEvent(MODULES, "onDocumentStart", []);
+ModuleUtils.onModuleEvent({
+	moduleList: MODULES,
+	eventHandlerName: "onDocumentStart",
+	handlerArgs: [],
+	logger: IOManager.GLOBAL_MANAGER,
+});
 
 globalThis.addEventListener(
 	"yt-page-data-fetched",
-	(payload: IYTCustomEvent) =>
-		ModuleUtils.onModuleEvent(MODULES, "onPageDataFetch", [payload])
+	(payload: IYTCustomEvent) => ModuleUtils.callAllModulesMethod({
+		moduleList: MODULES,
+		methodName: "onPageDataFetch",
+		methodArgs: [payload],
+		logger: IOManager.GLOBAL_MANAGER,
+		onlyIfShouldBeActive: true,
+	})
 );
 
 globalThis.addEventListener(
 	"load",
-	() => ModuleUtils.onModuleEvent(MODULES, "onDocumentLoad", [])
+	() => ModuleUtils.onModuleEvent({
+		moduleList: MODULES,
+		eventHandlerName: "onDocumentLoad",
+		handlerArgs: [],
+		logger: IOManager.GLOBAL_MANAGER,
+	})
 );
-// })();

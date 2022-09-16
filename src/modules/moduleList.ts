@@ -13,14 +13,14 @@ export default [
 			// onDocumentStart: noShortsOnURLChange,
 			onModuleStart: noShortsOnURLChange,
 		},
-		shouldBeActive: activateForRegex(/^\/shorts\/.*\/?$/i),
+		shouldBeActive: activateForRegex(/^\/shorts\/.*\/?$/i, false),
 		moduleName: "No Shorts Redirector"
 	}),
 	new YTUModule({
-		eventHandlers: {
+		methods: {
 			onPageDataFetch: initCustomPlaylistRuntimeDisplay,
 		},
-		shouldBeActive: activateForRegex(/^\/playlist\/?$/i),
+		shouldBeActive: activateForRegex(/^\/playlist\/?$/i, false),
 		moduleName: "Custom Playlist Statistics"
 	}),
 	new YTUModule({

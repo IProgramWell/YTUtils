@@ -43,25 +43,32 @@ export function elementize<
 		document.createElement(tagName),
 		attributes ?? {}
 	);
-	const elementChildren = children
-		?.filter(child =>
-			child !== null && child !== undefined
-		)
-		?.map(child =>
+	const elementChildren = children?.reduce<(string | Node)[]>(
+		(elems, child) =>
 		{
-			switch (typeof child)
+			if (child !== null && child !== undefined)
 			{
-				case "string":
-					return child;
-				case "object":
-					if (Array.isArray(child))
-						return elementize(child);
-					else
-						return child;
-				default:
-					return `${child}`;
+				switch (typeof child)
+				{
+					case "string":
+						elems.push(child);
+						break;
+					case "object":
+						if (Array.isArray(child))
+							elems.push(elementize(child));
+						else
+							elems.push(child);
+						break;
+					default:
+						elems.push(`${child}`);
+						break;
+				}
 			}
-		});
+			return elems;
+		},
+		[]
+	);
+
 	if (elementChildren && elementChildren.length > 0)
 	{
 		element.append(...elementChildren);
@@ -77,12 +84,20 @@ export function render(
 {
 	if (!parentElement || !components || components.length === 0)
 		return;
-	const elements = components
-		.filter(comp => comp)
-		.map(comp => Array.isArray(comp)
-			? elementize(comp)
-			: comp
-		);
+	const elements = components.reduce<(Node | string)[]>(
+		(elems, comp) =>
+		{
+			if (comp)
+			{
+				if (Array.isArray(comp))
+					elems.push(elementize(comp));
+				else
+					elems.push(comp);
+			}
+			return elems;
+		},
+		[]
+	);
 	switch (insertAt)
 	{
 		case "start":

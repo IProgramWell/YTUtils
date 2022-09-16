@@ -56,7 +56,15 @@ export function addNoPLControls(this: YTUModule)
 			newTabCheckbox,
 			newtabcheckboxLabel,
 			redirectButton
-		],
+		]
+			// Browser won't add an element if one already exists w/ the same ID.
+			/* .filter((
+				[type, attributes]:
+					[Component[0], Component[1] & { id?: string }]
+			) => !(
+				attributes?.id &&
+				pageUtils.queryElement(`${type}#${attributes.id}`)
+			)) */,
 		"start"
 	);
 

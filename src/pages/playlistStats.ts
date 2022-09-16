@@ -5,9 +5,7 @@ import type {
 	IYTCustomEvent
 } from "../../types/CustomEvent";
 
-//TODO: Find a way to make sure the time was added BEFORE being added to the sidebar.
-//(will probably work because the script runs first thing buuuuut...)
-//TODO also: Fix custom playlist stats module shitting itself if playlist is too long.
+//TODO: Fix custom playlist stats module shitting itself if playlist is too long.
 /**
  * Adds the total and estimated remaining time of the current playlist.
  */
@@ -75,5 +73,5 @@ export default function initCustomPlaylistRuntimeDisplay(this: YTUModule, payloa
 		);
 	this.logger.print("Added time to playlist!");
 
-	return true;
+	this.isActive = true;
 }

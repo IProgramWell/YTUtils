@@ -17,7 +17,7 @@ export default class IOManager extends AutoBound
 	constructor (
 		name: string,
 		logTimestamp: boolean = true,
-		timestampFormat: typeof IOManager.prototype.timestampFormat = "Locale"
+		timestampFormat: IOManager["timestampFormat"] = "Locale"
 	)
 	{
 		super();
@@ -79,6 +79,17 @@ export default class IOManager extends AutoBound
 				false
 			),
 			...messages
+		);
+	}
+
+	error(...errors: (string | any)[])
+	{
+		console.error(
+			this.getPrefix(
+				this.logTimestamp,
+				false
+			),
+			...errors
 		);
 	}
 
