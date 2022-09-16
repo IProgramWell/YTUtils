@@ -5,9 +5,7 @@ import type { IYTCustomEvent } from "../types/CustomEvent";
 
 new PathWatcher({
 	moduleList: MODULES,
-	logger: IOManager.GLOBAL_MANAGER,
 	watchWholeURL: true,
-	onUrlChange: ModuleUtils.onUrlChange,
 })
 	.start();
 

@@ -5,21 +5,18 @@ import { onUrlChange } from "../modules/moduleUtils";
 
 import type YTUModule from "../modules/YTUModule";
 
-/*
- * Will probably not test because this relies on a MutationObserver instance.
- * Unless I find a way to mock/fake the observer.
- */
-// TODO: Find away to mock the change detection.
 const DEFAULT_CTOR_OPTIONS: {
 	moduleList: YTUModule[],
 	logger: IOManager,
 	watchWholeURL: boolean,
 	onUrlChange: typeof onUrlChange,
+	ObserverClass: typeof MutationObserver
 } = {
 	moduleList: [],
 	logger: IOManager.GLOBAL_MANAGER,
 	watchWholeURL: false,
-	onUrlChange
+	onUrlChange,
+	ObserverClass: MutationObserver
 };
 export default class PathWatcher extends AutoBound
 {
@@ -30,19 +27,17 @@ export default class PathWatcher extends AutoBound
 	watchWholeURL: boolean = false;
 	urlChangeHandler: typeof onUrlChange;
 
-	constructor (
-		options: typeof DEFAULT_CTOR_OPTIONS = DEFAULT_CTOR_OPTIONS
-	)
+	constructor (options: Partial<typeof DEFAULT_CTOR_OPTIONS> = DEFAULT_CTOR_OPTIONS)
 	{
+		super();
+
 		options = {
 			...DEFAULT_CTOR_OPTIONS,
 			...options,
 		};
 
-		super();
-
 		this.lastURL = "";
-		this.observerInstance = new MutationObserver(this.onUrlChange);
+		this.observerInstance = new options.ObserverClass(this.onUrlChange);
 		this.logger = options.logger;
 		this.moduleList = options.moduleList;
 		this.watchWholeURL = options.watchWholeURL;
