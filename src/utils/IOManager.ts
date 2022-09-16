@@ -3,10 +3,7 @@ import { AutoBound } from "./ObjUtils";
 export default class IOManager extends AutoBound
 {
 	static GLOBAL_MANAGER = new IOManager(
-		globalThis
-			.GM_info?.()
-			?.script
-			?.name ??
+		globalThis.GM_info?.()?.script?.name ??
 		"YT Utils"
 	);
 

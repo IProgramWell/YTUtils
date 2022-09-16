@@ -82,6 +82,11 @@ export function render(
 	insertAt: "start" | "end" = "end"
 ): void
 {
+	console.log({
+		parentElement,
+		components,
+		insertAt
+	})
 	if (!parentElement || !components || components.length === 0)
 		return;
 	const elements = components.reduce<(Node | string)[]>(

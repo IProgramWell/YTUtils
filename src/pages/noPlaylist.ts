@@ -1,6 +1,7 @@
 import type YTUModule from "../modules/YTUModule";
 import type { Component } from "../../types/Component";
 
+// TODO: Fix noPlaylist module just... not working on refresh
 export function addNoPLControls(this: YTUModule)
 {
 	const { urlUtils, pageUtils } = this.utils;
