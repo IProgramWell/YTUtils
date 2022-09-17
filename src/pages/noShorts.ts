@@ -1,6 +1,7 @@
 export default function noShortsOnURLChange(this: import("../modules/YTUModule").YTUModule)
 {
 	const [, section, shortsID] = this
+		.utils
 		.urlUtils
 		.getCurrentLocation()
 		.pathname
