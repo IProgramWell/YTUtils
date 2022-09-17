@@ -130,12 +130,12 @@ export class YTUModule extends AutoBound
 			this.utils = moduleDetails.utils;
 	}
 
-	getStateValue<T>(name: keyof YTUModule["prototype"]["state"], defaultValue: T = null): T | null | undefined
+	getStateValue<T>(name: keyof YTUModule["state"], defaultValue: T = null): T | null | undefined
 	{
 		return this.state[name] ?? defaultValue;
 	}
 
-	setStateValue<T>(name: keyof YTUModule["prototype"]["state"], value: T)
+	setStateValue<T>(name: keyof YTUModule["state"], value: T)
 	{
 		this.state[name] = value;
 	}

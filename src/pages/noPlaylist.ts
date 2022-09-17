@@ -1,10 +1,13 @@
 import type YTUModule from "../modules/YTUModule";
 import type { Component } from "../../types/Component";
 
-// TODO: Fix noPlaylist module just... not working on refresh
 export function addNoPLControls(this: YTUModule)
 {
 	const { urlUtils, pageUtils } = this.utils;
+	const NO_PL_CTRL_CONTAINER = pageUtils.queryElement(".ytp-right-controls");
+	if (!NO_PL_CTRL_CONTAINER)
+		// throw new Error("Can't add controls; container not found!");
+		return false;
 	const centered = "float: left; top: 50%; white-space: nowrap;";
 	const newTabCheckboxID = "ytutils-noplaylist-newtabcheckbox";
 	const newTabCheckboxLabelID = "ytutils-noplaylist-newtabcheckbox-label"
@@ -52,7 +55,7 @@ export function addNoPLControls(this: YTUModule)
 	];
 
 	pageUtils.render(
-		pageUtils.queryElement(".ytp-right-controls"),
+		NO_PL_CTRL_CONTAINER,
 		[
 			newTabCheckbox,
 			newtabcheckboxLabel,
