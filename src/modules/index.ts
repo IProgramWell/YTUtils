@@ -1,24 +1,19 @@
+import { modules } from "userscriptbase";
 import
 {
 	noShortsOnURLChange,
 	initCustomPlaylistRuntimeDisplay,
 	noPlaylist
 } from "../pages";
-import { modules } from "userscriptbase";
 
 export default [
 	new modules.PageModule({
-		eventHandlers: {
-			// onDocumentStart: noShortsOnURLChange,
-			onModuleStart: noShortsOnURLChange,
-		},
+		eventHandlers: { onModuleStart: noShortsOnURLChange, },
 		shouldBeActive: modules.ModuleUtils.activateForRegex(/^\/shorts\/.*\/?$/i, false),
 		moduleName: "No Shorts Redirector"
 	}),
 	new modules.PageModule({
-		methods: {
-			onPageDataFetch: initCustomPlaylistRuntimeDisplay,
-		},
+		methods: { onPageDataFetch: initCustomPlaylistRuntimeDisplay, },
 		shouldBeActive: modules.ModuleUtils.activateForRegex(/^\/playlist\/?$/i, false),
 		moduleName: "Custom Playlist Statistics"
 	}),

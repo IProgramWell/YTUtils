@@ -1,4 +1,5 @@
 import { modules, utils } from "userscriptbase";
+
 import moduleList from "./modules";
 
 import type { IYTCustomEvent } from "../types/CustomEvent";

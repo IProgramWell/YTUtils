@@ -7,7 +7,12 @@ const METADATA_COMMON = {
 	name: "YT Utils",
 	namespace: "Violentmonkey Scripts",
 	match: ["https://www.youtube.com/**"],
-	grant: ["none"],
+	grant: [
+		"GM_info",
+		"GM.info",
+		"GM_openInTab",
+		"GM.openInTab",
+	],
 	version: "1.5.7",
 	author: "-",
 	"inject-into": "page",

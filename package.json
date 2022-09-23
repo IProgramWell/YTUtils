@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "npm i && npm run test && webpack",
+    "build": "npm run test && webpack",
     "dev": "npm run build && serve dist",
     "test": "",
     "circ": "madge --circular --extensions js,ts --warning --ts-config ./tsconfig.json .",
