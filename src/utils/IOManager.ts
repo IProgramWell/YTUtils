@@ -2,26 +2,47 @@ import { AutoBound } from "./ObjUtils";
 
 export default class IOManager extends AutoBound
 {
-	static GLOBAL_MANAGER = new IOManager(
-		globalThis.GM_info?.()?.script?.name ??
-		"YT Utils"
-	);
+	static readonly IFRAME_LOG_PREFIX: string = "iframe";
+	static readonly DEFAULT_LOGGER_OPTIONS: {
+		name: string,
+		logTimestamp: boolean,
+		timestampFormat: IOManager["timestampFormat"],
+		detectIFrames: boolean,
+	} = {
+			name: globalThis.GM_info?.()?.script?.name,
+			logTimestamp: true,
+			timestampFormat: "Locale",
+			detectIFrames: true
+		};
+	static GLOBAL_MANAGER = new IOManager({
+		name: globalThis
+			.GM_info?.()
+			?.script
+			?.name ??
+			"YT Utils"
+	});
 
 	scriptName: string;
 	logTimestamp: boolean;
 	timestampFormat: "ISO" | "UTC" | "Locale" | "Milliseconds" | "Human";
+	isInIFrame: boolean = false;
 
 	constructor (
-		name: string,
-		logTimestamp: boolean = true,
-		timestampFormat: IOManager["timestampFormat"] = "Locale"
+		loggerOptions:
+			Partial<typeof IOManager["DEFAULT_LOGGER_OPTIONS"]> =
+			IOManager.DEFAULT_LOGGER_OPTIONS
 	)
 	{
+		const options = {
+			...IOManager.DEFAULT_LOGGER_OPTIONS,
+			...loggerOptions,
+		};
 		super();
 
-		this.scriptName = name;
-		this.logTimestamp = logTimestamp;
-		this.timestampFormat = timestampFormat;
+		this.scriptName = options.name;
+		this.logTimestamp = options.logTimestamp;
+		this.timestampFormat = options.timestampFormat;
+		this.isInIFrame = options.detectIFrames && window.self !== window.top;
 	}
 
 	getTimestamp(): string
@@ -45,25 +66,30 @@ export default class IOManager extends AutoBound
 	joinPrefixes(prefixList: string[], addSpace: boolean = false): string
 	{
 		return prefixList
-			.map(prfx => `[${prfx}]`)
-			.join(" ") +
-			":" +
-			(addSpace
-				? " "
-				: ""
-			);
+			.reduce(
+				(list: string[], prfx: string) =>
+				{
+					if (prfx)
+						list.push(`[${prfx}]`);
+					return list;
+				},
+				[]
+			)
+			.join(" ") + ":" +
+			(addSpace ? " " : "");
 	}
 
 	getPrefix(includeTimestamp: boolean = false, addSpace: boolean = false): string
 	{
+		const prefixList: string[] = [];
+		if (includeTimestamp)
+			prefixList.push(this.getTimestamp());
+		if (this.isInIFrame)
+			prefixList.push(IOManager.IFRAME_LOG_PREFIX);
+		prefixList.push(this.scriptName);
+
 		return this.joinPrefixes(
-			[
-				...(includeTimestamp
-					? [this.getTimestamp()]
-					: []
-				),
-				this.scriptName,
-			],
+			prefixList,
 			addSpace
 		);
 	}
