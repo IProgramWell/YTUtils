@@ -1,15 +1,12 @@
-import { DateUtils } from "../utils/index";
+import { utils, modules } from "userscriptbase";
 
-import type YTUModule from "../modules/YTUModule";
-import type {
-	IYTCustomEvent
-} from "../../types/CustomEvent";
+import type { IYTCustomEvent } from "../../types/CustomEvent";
 
 //TODO: Fix custom playlist stats module shitting itself if playlist is too long.
 /**
  * Adds the total and estimated remaining time of the current playlist.
  */
-export default function initCustomPlaylistRuntimeDisplay(this: YTUModule, payload: IYTCustomEvent)
+export default function initCustomPlaylistRuntimeDisplay(this: modules.PageModule, payload: IYTCustomEvent)
 {
 	let playlistSeconds: { total: number; remaining: number; } = payload
 		.detail
@@ -49,8 +46,8 @@ export default function initCustomPlaylistRuntimeDisplay(this: YTUModule, payloa
 			{ total: 0, remaining: 0, }
 		)
 
-	let runtimeString = `Runtime: ${DateUtils.getTimeString(playlistSeconds.total)}`,
-		remainingString = `Estimated remaining: ${DateUtils.getTimeString(playlistSeconds.remaining)}`;
+	let runtimeString = `Runtime: ${utils.DateUtils.getTimeString(playlistSeconds.total)}`,
+		remainingString = `Estimated remaining: ${utils.DateUtils.getTimeString(playlistSeconds.remaining)}`;
 
 	this.logger.print({
 		playlistSeconds,

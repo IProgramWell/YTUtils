@@ -1,4 +1,4 @@
-export default function noShortsOnURLChange(this: import("../modules/YTUModule").YTUModule)
+export default function noShortsOnURLChange(this: import("userscriptbase").modules.PageModule)
 {
 	const [, section, shortsID] = this
 		.utils

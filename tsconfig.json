@@ -34,6 +34,7 @@
 		"./types",
 	],
 	"files": [
-		"./global.d.ts"
+		// "./global.d.ts"
+		"./node_modules/userscriptbase/global.d.ts"
 	]
 }

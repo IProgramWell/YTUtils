@@ -1,7 +1,7 @@
-import type YTUModule from "../modules/YTUModule";
-import type { Component } from "../../types/Component";
+import type { modules } from "userscriptbase";
+import type { ComponentTypes } from "userscriptbase/types";
 
-export function addNoPLControls(this: YTUModule)
+export function addNoPLControls(this: modules.PageModule)
 {
 	const { urlUtils, pageUtils } = this.utils;
 	const NO_PL_CTRL_CONTAINER = pageUtils.queryElement(".ytp-right-controls");
@@ -16,7 +16,7 @@ export function addNoPLControls(this: YTUModule)
 	this.setStateValue?.("noPLButtonID", noPLButtonID);
 	this.setStateValue?.("newTabCheckboxLabelID", newTabCheckboxLabelID);
 
-	const newTabCheckbox: Component = [
+	const newTabCheckbox: ComponentTypes.Component = [
 		"input",
 		{
 			type: "checkbox",
@@ -26,7 +26,7 @@ export function addNoPLControls(this: YTUModule)
 			title: "Open in new tab",
 		},
 	];
-	const newtabcheckboxLabel: Component = [
+	const newtabcheckboxLabel: ComponentTypes.Component = [
 		"label",
 		{
 			htmlFor: newTabCheckboxID,
@@ -35,7 +35,7 @@ export function addNoPLControls(this: YTUModule)
 			id: newTabCheckboxLabelID,
 		}
 	];
-	const redirectButton: Component = [
+	const redirectButton: ComponentTypes.Component = [
 		"button",
 		{
 			// className: "ytp-button",
@@ -75,7 +75,7 @@ export function addNoPLControls(this: YTUModule)
 	return true;
 }
 
-export function removeNoPLControls(this: YTUModule)
+export function removeNoPLControls(this: modules.PageModule)
 {
 	for (let id of [
 		"noPLButtonID",
@@ -89,7 +89,7 @@ export function removeNoPLControls(this: YTUModule)
 	return false;
 }
 
-export function shouldBeActiveFor(this: YTUModule, url?: string | URL | Location): boolean
+export function shouldBeActiveFor(this: modules.PageModule, url?: string | URL | Location): boolean
 {
 	const TEST_URL = url
 		? (typeof url === "string"
