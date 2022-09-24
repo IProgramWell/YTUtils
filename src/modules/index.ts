@@ -9,12 +9,18 @@ import
 export default [
 	new modules.PageModule({
 		eventHandlers: { onModuleStart: noShortsOnURLChange, },
-		shouldBeActive: modules.ModuleUtils.activateForRegex(/^\/shorts\/.*\/?$/i, false),
+		shouldBeActive: modules.ModuleUtils.activateForRegex(
+			/^\/shorts\/.*\/?$/i,
+			false
+		),
 		moduleName: "No Shorts Redirector"
 	}),
 	new modules.PageModule({
 		methods: { onPageDataFetch: initCustomPlaylistRuntimeDisplay, },
-		shouldBeActive: modules.ModuleUtils.activateForRegex(/^\/playlist\/?$/i, false),
+		shouldBeActive: modules.ModuleUtils.activateForRegex(
+			/^\/playlist\/?$/i,
+			false
+		),
 		moduleName: "Custom Playlist Statistics"
 	}),
 	new modules.PageModule({

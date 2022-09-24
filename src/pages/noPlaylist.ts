@@ -1,50 +1,50 @@
 import type { modules } from "userscriptbase";
-import type { ComponentTypes } from "userscriptbase/types";
+
+const IDS = {
+	newTabCheckboxID: "ytutils-noplaylist-newtabcheckbox",
+	newTabCheckboxLabelID: "ytutils-noplaylist-newtabcheckbox-label",
+	noPLButtonID: "ytutils-noplaylist-noplbtn",
+};
 
 export function addNoPLControls(this: modules.PageModule)
 {
 	const { urlUtils, pageUtils } = this.utils;
 	const NO_PL_CTRL_CONTAINER = pageUtils.queryElement(".ytp-right-controls");
 	if (!NO_PL_CTRL_CONTAINER)
-		// throw new Error("Can't add controls; container not found!");
 		return false;
 	const centered = "float: left; top: 50%; white-space: nowrap;";
-	const newTabCheckboxID = "ytutils-noplaylist-newtabcheckbox";
-	const newTabCheckboxLabelID = "ytutils-noplaylist-newtabcheckbox-label"
-	const noPLButtonID = "ytutils-noplaylist-noplbtn";
-	this.setStateValue?.("newTabCheckboxID", newTabCheckboxID);
-	this.setStateValue?.("noPLButtonID", noPLButtonID);
-	this.setStateValue?.("newTabCheckboxLabelID", newTabCheckboxLabelID);
+	for (let [idName, idValue] of Object.entries(IDS))
+		this.setStateValue?.(idName, idValue);
 
-	const newTabCheckbox: ComponentTypes.Component = [
+	const newTabCheckbox = pageUtils.createElement(
 		"input",
 		{
 			type: "checkbox",
-			id: newTabCheckboxID,
+			id: IDS.newTabCheckboxID,
 			style: `${centered} transform: translateY(50%)`,
-			name: newTabCheckboxID,
+			name: IDS.newTabCheckboxID,
 			title: "Open in new tab",
-		},
-	];
-	const newtabcheckboxLabel: ComponentTypes.Component = [
+		}
+	);
+	const newtabcheckboxLabel = pageUtils.createElement(
 		"label",
 		{
-			htmlFor: newTabCheckboxID,
+			htmlFor: IDS.newTabCheckboxID,
 			innerHTML: "New tab?",
 			style: centered,
-			id: newTabCheckboxLabelID,
+			id: IDS.newTabCheckboxLabelID,
 		}
-	];
-	const redirectButton: ComponentTypes.Component = [
+	);
+	const redirectButton = pageUtils.createElement(
 		"button",
 		{
 			// className: "ytp-button",
-			id: noPLButtonID,
+			id: IDS.noPLButtonID,
 			title: "Watch outside playlist",
-			onclick: () =>
+			onclick()
 			{
 				let searchParams = pageUtils.getSearchParams();
-				if (pageUtils.queryElement<HTMLInputElement>(`#${newTabCheckboxID}`)?.checked)
+				if (pageUtils.queryElement<HTMLInputElement>(`#$ IDS.{newTabCheckboxID}`)?.checked)
 					urlUtils.openNewTab(`https://youtube.com/watch?v=${searchParams.v}`);
 				else
 					urlUtils.setLocationAttribute("search", `?v=${searchParams.v}`);
@@ -52,24 +52,12 @@ export function addNoPLControls(this: modules.PageModule)
 			innerHTML: "No Playlist",
 			style: centered,
 		}
-	];
+	);
 
-	pageUtils.render(
-		NO_PL_CTRL_CONTAINER,
-		[
-			newTabCheckbox,
-			newtabcheckboxLabel,
-			redirectButton
-		]
-			// Browser won't add an element if one already exists w/ the same ID.
-			/* .filter((
-				[type, attributes]:
-					[Component[0], Component[1] & { id?: string }]
-			) => !(
-				attributes?.id &&
-				pageUtils.queryElement(`${type}#${attributes.id}`)
-			)) */,
-		"start"
+	NO_PL_CTRL_CONTAINER.prepend(
+		newTabCheckbox,
+		newtabcheckboxLabel,
+		redirectButton
 	);
 
 	return true;
@@ -77,14 +65,13 @@ export function addNoPLControls(this: modules.PageModule)
 
 export function removeNoPLControls(this: modules.PageModule)
 {
-	for (let id of [
-		"noPLButtonID",
-		"newTabCheckboxID",
-		"newTabCheckboxLabelID"
-	])
-	{
-		this.utils.pageUtils.removeElementById(this.getStateValue?.(id, null));
-	}
+	for (let [idName, idValue] of Object.entries(IDS))
+		this.utils.pageUtils.removeElementById(
+			this.getStateValue?.(
+				idName,
+				idValue
+			)
+		);
 
 	return false;
 }
