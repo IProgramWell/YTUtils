@@ -44,7 +44,7 @@ export function addNoPLControls(this: modules.PageModule)
 			onclick()
 			{
 				let searchParams = pageUtils.getSearchParams();
-				if (pageUtils.queryElement<HTMLInputElement>(`#$ IDS.{newTabCheckboxID}`)?.checked)
+				if (pageUtils.queryElement<HTMLInputElement>(`#${IDS.newTabCheckboxID}`)?.checked)
 					urlUtils.openNewTab(`https://youtube.com/watch?v=${searchParams.v}`);
 				else
 					urlUtils.setLocationAttribute("search", `?v=${searchParams.v}`);
