@@ -13,7 +13,7 @@ const METADATA_COMMON = {
 		"GM_openInTab",
 		"GM.openInTab",
 	],
-	version: "1.5.7",
+	version: "1.5.8",
 	author: "-",
 	"inject-into": "page",
 	"run-at": "document-start",
