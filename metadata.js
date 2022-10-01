@@ -1,5 +1,5 @@
 /**
- * @typedef {import("./types/ViolentMonkey").Metadata} Metadata
+ * @typedef {import("userscriptbase/types/ViolentMonkey").Metadata} Metadata
  */
 
 /** @type {Metadata} */
@@ -9,9 +9,7 @@ const METADATA_COMMON = {
 	match: ["https://www.youtube.com/**"],
 	grant: [
 		"GM_info",
-		"GM.info",
 		"GM_openInTab",
-		"GM.openInTab",
 	],
 	version: "1.5.8",
 	author: "-",
@@ -47,9 +45,14 @@ const TAG_TO_STRING = {
 	noframes: (noframes, keySuffix) => noframes
 		? `// @noframes${keySuffix ?? ""}`
 		: "",
-	grant: (grantArray, keySuffix) => grantArray
-		.map(grant => `// @grant${keySuffix ?? ""} ${grant}`)
-		.join("\n"),
+	grant: (grant, keySuffix) => grant === "none"
+		? "// @grant none"
+		: (Array.isArray(grant)
+			? grant
+				.map(grant => `// @grant${keySuffix ?? ""} ${grant}`)
+				.join("\n")
+			: `// @grant ${grant}`
+		),
 	unwrap: (unwrap, keySuffix) => unwrap
 		? `// @unwrap${keySuffix ?? ""}`
 		: "",

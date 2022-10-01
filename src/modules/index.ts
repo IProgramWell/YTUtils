@@ -1,10 +1,8 @@
 import { modules } from "userscriptbase";
-import
-{
-	noShortsOnURLChange,
-	initCustomPlaylistRuntimeDisplay,
-	noPlaylist
-} from "../pages";
+
+import initCustomPlaylistRuntimeDisplay from "./playlistStats";
+import noShortsOnURLChange from "./noShorts";
+import * as noPlaylist from "./noPlaylist";
 
 export default [
 	new modules.PageModule({

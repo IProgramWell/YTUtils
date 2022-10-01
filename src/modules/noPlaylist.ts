@@ -14,7 +14,7 @@ export function addNoPLControls(this: modules.PageModule)
 		return false;
 	const centered = "float: left; top: 50%; white-space: nowrap;";
 	for (let [idName, idValue] of Object.entries(IDS))
-		this.setStateValue?.(idName, idValue);
+		this.setStateValue(idName, idValue);
 
 	const newTabCheckbox = pageUtils.createElement(
 		"input",
@@ -67,7 +67,7 @@ export function removeNoPLControls(this: modules.PageModule)
 {
 	for (let [idName, idValue] of Object.entries(IDS))
 		this.utils.pageUtils.removeElementById(
-			this.getStateValue?.(
+			this.getStateValue(
 				idName,
 				idValue
 			)
@@ -78,7 +78,7 @@ export function removeNoPLControls(this: modules.PageModule)
 
 export function shouldBeActiveFor(this: modules.PageModule, url?: string | URL | Location): boolean
 {
-	const TEST_URL = url
+	const URL_TO_CHECK = url
 		? (typeof url === "string"
 			? new URL(url)
 			: url
@@ -86,8 +86,8 @@ export function shouldBeActiveFor(this: modules.PageModule, url?: string | URL |
 		: this.utils.urlUtils.getCurrentLocation();
 
 	return (
-		TEST_URL.pathname === "/watch" &&
+		/\/watch\/?/i.test(URL_TO_CHECK.pathname) &&
 		//If the current video is NOT played from a playlist, do nothing.
-		!!this.utils.pageUtils.getSearchParams(TEST_URL).list
+		!!this.utils.pageUtils.getSearchParams(URL_TO_CHECK).list
 	);
 }
