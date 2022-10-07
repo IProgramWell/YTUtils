@@ -13,8 +13,6 @@ export function addNoPLControls(this: modules.PageModule)
 	if (!NO_PL_CTRL_CONTAINER)
 		return false;
 	const centered = "float: left; top: 50%; white-space: nowrap;";
-	for (let [idName, idValue] of Object.entries(IDS))
-		this.setStateValue(idName, idValue);
 
 	const newTabCheckbox = pageUtils.createElement(
 		"input",
@@ -65,13 +63,8 @@ export function addNoPLControls(this: modules.PageModule)
 
 export function removeNoPLControls(this: modules.PageModule)
 {
-	for (let [idName, idValue] of Object.entries(IDS))
-		this.utils.pageUtils.removeElementById(
-			this.getStateValue(
-				idName,
-				idValue
-			)
-		);
+	for (let id of Object.values(IDS))
+		this.utils.pageUtils.removeElementById(id);
 
 	return false;
 }

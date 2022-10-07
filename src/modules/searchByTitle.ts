@@ -2,17 +2,18 @@ import { modules } from "userscriptbase";
 
 import { GLOBAL_AWAITER } from "../config";
 
-const IDS = {
-	SEARCH_BTN: "ytutils-searchbytitle-searchbtn",
-};
+const IDS = { SEARCH_BTN: "ytutils-searchbytitle-searchbtn" };
+
 // TODO: fix soft redirects (playlist to video in it) causing the button to be added before text.
-export function addSearchBtn(this: modules.PageModule/* , event: IYTPlayerEvent */)
+export function addSearchBtn(this: modules.PageModule)
 {
 	const {
-		pageUtils
-	} = this.utils;
-	for (let [idName, idValue] of Object.entries(IDS))
-		this.setStateValue(idName, idValue);
+		utils: {
+			pageUtils,
+			urlUtils,
+		},
+		logger
+	} = this;
 
 	/**
 	 * Matches `yt-formatted-string` elements that are direct decendants of a
@@ -23,52 +24,72 @@ export function addSearchBtn(this: modules.PageModule/* , event: IYTPlayerEvent 
 	 * 
 	 * (Split for readability)
 	 */
-	let query = "h1" +
-		".title" +
-		".style-scope" +
-		".ytd-video-primary-info-renderer" +
-		":not([display='none'])" +
-		":not([visibility='hidden'])" +
-		" > yt-formatted-string",
-		titleElem = pageUtils.queryElement(query);
-	if (!titleElem)
-		GLOBAL_AWAITER.addQuery(
-			query,
-			nodes => onTitleElemFound(nodes[0], this)
-		);
-	else
-		onTitleElemFound(titleElem, this);
-	return true;
-}
-
-function onTitleElemFound(
-	title: Node,
-	thisArg: modules.PageModule
-)
-{
-	if (!(title instanceof HTMLElement))
-		return;
-	const titleText = title.innerText;
-	title.appendChild(thisArg.utils.pageUtils.createElement(
-		"a",
+	/* let query = "h1" +
+	".title" +
+	".style-scope" +
+	".ytd-video-primary-info-renderer" +
+	":not([display='none'])" +
+	":not([visibility='hidden'])" +
+	" > yt-formatted-string"; */
+	const /* containerQuery = "div#menu-container",  */
+		titleXpath = "//*[@id=\"container\"]/h1/yt-formatted-string[text()]",
+		btnText = "🔍";
+	GLOBAL_AWAITER.addXpath(
 		{
-			innerText: "🔍",
-			title: "Search by this video's title",
-			id: thisArg.getStateValue("SEARCH_BTN", IDS.SEARCH_BTN),
-			href: `https://youtube.com/results?search_query=${encodeURIComponent(titleText)}`
+			xpath: titleXpath,
+			contextNode: document.body ?? document,
+			isValidResult(result)
+			{
+				try { return !!result.singleNodeValue; }
+				catch (_) { return false; }
+			},
+			resultType: XPathResult.ANY_UNORDERED_NODE_TYPE,
+		},
+		function (result: XPathResult)
+		{
+			if (!(result instanceof XPathResult))
+				return;
+			logger.print(result.singleNodeValue);
+			result
+				.singleNodeValue
+				.appendChild(pageUtils.createElement(
+					"span",
+					{
+						innerText: btnText,
+						title: "Search by this video's title",
+						id: IDS.SEARCH_BTN,
+						onclick(event: Event)
+						{
+							event.preventDefault();
+							urlUtils.navigate(
+								`https://youtube.com/results?search_query=${encodeURIComponent(
+									pageUtils
+										.evaluate(
+											titleXpath,
+											document.body ?? document,
+											null,
+											XPathResult.ANY_UNORDERED_NODE_TYPE,
+											null
+										)
+										.singleNodeValue
+										.textContent
+										.split(btnText)
+										.join("")
+								)}`
+							);
+						}
+					}
+				));
 		}
-	));
+	);
+	return true;
 }
 
 export function removeSearchBtn(this: modules.PageModule)
 {
-	for (let [idName, idValue] of Object.entries(IDS))
-		this.utils.pageUtils.removeElementById(
-			this.getStateValue(
-				idName,
-				idValue
-			)
-		);
+	this.logger.print(this, IDS);
+	for (let id of Object.values(IDS))
+		this.utils.pageUtils.removeElementById(id);
 
 	return false;
 }
