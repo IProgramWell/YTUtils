@@ -5,6 +5,7 @@ import { GLOBAL_AWAITER } from "../config";
 const IDS = {
 	SEARCH_BTN: "ytutils-searchbytitle-searchbtn",
 };
+// TODO: fix soft redirects (playlist to video in it) causing the button to be added before text.
 export function addSearchBtn(this: modules.PageModule/* , event: IYTPlayerEvent */)
 {
 	const {

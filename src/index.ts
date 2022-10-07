@@ -29,6 +29,17 @@ globalThis.addEventListener(
 );
 
 globalThis.addEventListener(
+	"yt-navigate-finish",
+	(payload: IYTCustomEvent) => modules.ModuleUtils.callAllModulesMethod({
+		moduleList: moduleList,
+		methodName: "onNavigateFinish",
+		methodArgs: [payload],
+		logger: utils.IOManager.GLOBAL_MANAGER,
+		onlyIfShouldBeActive: true,
+	})
+);
+
+globalThis.addEventListener(
 	"load",
 	() => modules.ModuleUtils.onModuleEvent({
 		moduleList: moduleList,
