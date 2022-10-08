@@ -57,6 +57,7 @@ export function addSearchBtn(this: modules.PageModule)
 					{
 						innerText: btnText,
 						title: "Search by this video's title",
+						style: "cursor: grab;",
 						id: IDS.SEARCH_BTN,
 						onclick(event: Event)
 						{
