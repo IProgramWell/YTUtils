@@ -5,6 +5,7 @@ import { GLOBAL_AWAITER } from "../config";
 const IDS = { SEARCH_BTN: "ytutils-searchbytitle-searchbtn" };
 
 // TODO: fix soft redirects (playlist to video in it) causing the button to be added before text.
+// (for now "fixed" by inserting search button before title)
 export function addSearchBtn(this: modules.PageModule)
 {
 	const {
@@ -24,63 +25,52 @@ export function addSearchBtn(this: modules.PageModule)
 	 * 
 	 * (Split for readability)
 	 */
-	/* let query = "h1" +
-	".title" +
-	".style-scope" +
-	".ytd-video-primary-info-renderer" +
-	":not([display='none'])" +
-	":not([visibility='hidden'])" +
-	" > yt-formatted-string"; */
-	const /* containerQuery = "div#menu-container",  */
-		titleXpath = "//*[@id=\"container\"]/h1/yt-formatted-string[text()]",
-		btnText = "🔍";
-	GLOBAL_AWAITER.addXpath(
-		{
-			xpath: titleXpath,
-			contextNode: document.body ?? document,
-			isValidResult(result)
+	const titleQuery = "h1" +
+		".title" +
+		".style-scope" +
+		".ytd-video-primary-info-renderer" +
+		":not([display='none'])" +
+		":not([visibility='hidden'])" +
+		" > yt-formatted-string",
+		// containerQuery = "div#menu-container",
+		// titleXpath = "//*[@id=\"container\"]/h1/yt-formatted-string[text()]",
+		btnText = "🔍",
+		searchBtn = pageUtils.createElement(
+			"span",
 			{
-				try { return !!result.singleNodeValue; }
-				catch (_) { return false; }
-			},
-			resultType: XPathResult.ANY_UNORDERED_NODE_TYPE,
-		},
-		function (result: XPathResult)
+				innerText: btnText,
+				title: "Search by this video's title",
+				style: "cursor: grab;",
+				id: IDS.SEARCH_BTN,
+				onclick(event: Event)
+				{
+					event.preventDefault();
+					urlUtils.navigate(
+						`https://youtube.com/results?search_query=${encodeURIComponent(
+							pageUtils
+								.queryElement(titleQuery)
+								.textContent
+								.split(btnText)
+								.join("")
+						)}`
+					);
+				}
+			}
+		);
+	GLOBAL_AWAITER.addQuery(
+		titleQuery,
+		function (result: NodeList)
 		{
-			if (!(result instanceof XPathResult))
+			if (!(result instanceof NodeList))
 				return;
-			logger.print(result.singleNodeValue);
-			result
-				.singleNodeValue
-				.appendChild(pageUtils.createElement(
-					"span",
-					{
-						innerText: btnText,
-						title: "Search by this video's title",
-						style: "cursor: grab;",
-						id: IDS.SEARCH_BTN,
-						onclick(event: Event)
-						{
-							event.preventDefault();
-							urlUtils.navigate(
-								`https://youtube.com/results?search_query=${encodeURIComponent(
-									pageUtils
-										.evaluate(
-											titleXpath,
-											document.body ?? document,
-											null,
-											XPathResult.ANY_UNORDERED_NODE_TYPE,
-											null
-										)
-										.singleNodeValue
-										.textContent
-										.split(btnText)
-										.join("")
-								)}`
-							);
-						}
-					}
-				));
+			logger.print(result[0]);
+			if (result[0].firstChild)
+				(result[0] as Element).insertBefore(
+					searchBtn,
+					result[0].firstChild
+				);
+			else
+				result[0].appendChild(searchBtn);
 		}
 	);
 	return true;
