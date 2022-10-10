@@ -1,9 +1,17 @@
-import { modules } from "userscriptbase";
+import type { modules } from "userscriptbase";
+import type { IYTPlayerEvent } from "../../types/CustomEvent";
 
 const IDS = { SEARCH_BTN: "ytutils-searchbytitle-searchbtn" };
+const STATE_KEYS = { VIDEO_TITLE: "videoTitle" };
 
-// TODO: fix soft redirects (playlist to video in it) causing the button to be added before text.
-// (for now "fixed" by inserting search button before title)
+export function updateTitleState(this: modules.PageModule, event: IYTPlayerEvent)
+{
+	this?.setStateValue?.(
+		STATE_KEYS.VIDEO_TITLE,
+		event.detail.pageData.playerResponse.videoDetails.title
+	);
+}
+
 export function addSearchBtn(this: modules.PageModule)
 {
 	const {
@@ -13,53 +21,43 @@ export function addSearchBtn(this: modules.PageModule)
 			queryAwaiter
 		},
 		logger,
+		getStateValue
 	} = this;
 	if (!queryAwaiter)
 		return false;
 
-	/**
-	 * Matches `yt-formatted-string` elements that are direct decendants of a
-	 * **visible** `h1` tag with the following classes:
-	 *  - title
-	 *  - style-scope
-	 *  - ytd-video-primary-info-renderer
-	 * 
-	 * (Split for readability)
-	 */
-	const titleQuery = "h1" +
-		".title" +
-		".style-scope" +
-		".ytd-video-primary-info-renderer" +
-		":not([display='none'])" +
-		":not([visibility='hidden'])" +
-		" > yt-formatted-string",
-		// containerQuery = "div#menu-container",
-		// titleXpath = "//*[@id=\"container\"]/h1/yt-formatted-string[text()]",
-		searchBtn = pageUtils.createElement(
-			"span",
-			{
-				innerText: "🔍",
-				title: "Search by this video's title",
-				style: "cursor: grab;",
-				id: IDS.SEARCH_BTN,
-				onclick()
-				{
-					urlUtils.navigate(
-						`https://youtube.com/results?search_query=${encodeURIComponent(
-							pageUtils.queryElement(titleQuery).textContent
-						)}`
-					);
-				}
-			}
-		);
-	queryAwaiter.addQuery(
-		titleQuery,
-		function (result: NodeList)
+	const searchBtn = pageUtils.createElement(
+		"span",
 		{
-			if (!(result instanceof NodeList))
-				return;
-			logger.print(result[0]);
-			result[0].parentElement.prepend(searchBtn);
+			innerText: "🔍",
+			title: "Search by this video's title",
+			style: "cursor: grab;",
+			id: IDS.SEARCH_BTN,
+			onclick()
+			{
+				urlUtils.navigate(
+					`https://youtube.com/results?search_query=${encodeURIComponent(
+						getStateValue?.(STATE_KEYS.VIDEO_TITLE, null)
+					)}`
+				);
+			}
+		}
+	);
+	queryAwaiter.addXpath(
+		{
+			xpath: "//*[@id=\"container\"]/h1/yt-formatted-string[text()]",
+			contextNode: document.body ?? document,
+			isValidResult(result)
+			{
+				try { return !!result.singleNodeValue; }
+				catch (_) { return false; }
+			},
+			resultType: XPathResult.ANY_UNORDERED_NODE_TYPE
+		},
+		function (result)
+		{
+			logger.print(result.singleNodeValue);
+			result.singleNodeValue.parentElement.append(searchBtn);
 		}
 	);
 	return true;

@@ -31,6 +31,7 @@ export default [
 			onModuleStart: searchByTitle.addSearchBtn,
 			onModuleStop: searchByTitle.removeSearchBtn,
 		},
+		methods: { onPageDataFetch: searchByTitle.updateTitleState },
 		shouldBeActive: modules.ModuleUtils.activateForRegex(/^\/watch\/?$/),
 		moduleName: "Search by title",
 		utils: {
