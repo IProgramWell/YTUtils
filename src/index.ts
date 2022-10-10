@@ -4,47 +4,34 @@ import moduleList from "./modules";
 
 import type { IYTCustomEvent } from "../types/CustomEvent";
 
-new utils.PathWatcher({
-	moduleList: moduleList,
-	watchWholeURL: true,
-})
-	.start();
+function onYTEvent(moduleEventName: string): (payload: IYTCustomEvent) => void
+{
+	return function (payload)
+	{
+		modules.ModuleUtils.callAllModulesMethod({
+			moduleList,
+			methodName: moduleEventName,
+			methodArgs: [payload],
+			onlyIfShouldBeActive: true,
+		});
+	};
+}
+
+new utils.PathWatcher({ moduleList, watchWholeURL: true }).start();
 
 modules.ModuleUtils.onModuleEvent({
-	moduleList: moduleList,
+	moduleList,
 	eventHandlerName: "onDocumentStart",
 	handlerArgs: [],
-	logger: utils.IOManager.GLOBAL_MANAGER,
 });
 
-globalThis.addEventListener(
-	"yt-page-data-fetched",
-	(payload: IYTCustomEvent) => modules.ModuleUtils.callAllModulesMethod({
-		moduleList: moduleList,
-		methodName: "onPageDataFetch",
-		methodArgs: [payload],
-		logger: utils.IOManager.GLOBAL_MANAGER,
-		onlyIfShouldBeActive: true,
-	})
-);
-
-globalThis.addEventListener(
-	"yt-navigate-finish",
-	(payload: IYTCustomEvent) => modules.ModuleUtils.callAllModulesMethod({
-		moduleList: moduleList,
-		methodName: "onNavigateFinish",
-		methodArgs: [payload],
-		logger: utils.IOManager.GLOBAL_MANAGER,
-		onlyIfShouldBeActive: true,
-	})
-);
-
+globalThis.addEventListener("yt-page-data-fetched", onYTEvent("onPageDataFetch"));
+globalThis.addEventListener("yt-navigate-finish", onYTEvent("onNavigateFinish"));
 globalThis.addEventListener(
 	"load",
 	() => modules.ModuleUtils.onModuleEvent({
-		moduleList: moduleList,
+		moduleList,
 		eventHandlerName: "onDocumentLoad",
 		handlerArgs: [],
-		logger: utils.IOManager.GLOBAL_MANAGER,
 	})
 );

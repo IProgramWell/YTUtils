@@ -1,6 +1,6 @@
 export default function noShortsOnURLChange(this: import("userscriptbase").modules.PageModule)
 {
-	const [, section, shortsID] = this
+	const [_, section, shortsID] = this
 		.utils
 		.urlUtils
 		.getCurrentLocation()

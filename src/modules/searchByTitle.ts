@@ -1,7 +1,5 @@
 import { modules } from "userscriptbase";
 
-import { GLOBAL_AWAITER } from "../config";
-
 const IDS = { SEARCH_BTN: "ytutils-searchbytitle-searchbtn" };
 
 // TODO: fix soft redirects (playlist to video in it) causing the button to be added before text.
@@ -12,9 +10,12 @@ export function addSearchBtn(this: modules.PageModule)
 		utils: {
 			pageUtils,
 			urlUtils,
+			queryAwaiter
 		},
-		logger
+		logger,
 	} = this;
+	if (!queryAwaiter)
+		return false;
 
 	/**
 	 * Matches `yt-formatted-string` elements that are direct decendants of a
@@ -34,43 +35,31 @@ export function addSearchBtn(this: modules.PageModule)
 		" > yt-formatted-string",
 		// containerQuery = "div#menu-container",
 		// titleXpath = "//*[@id=\"container\"]/h1/yt-formatted-string[text()]",
-		btnText = "🔍",
 		searchBtn = pageUtils.createElement(
 			"span",
 			{
-				innerText: btnText,
+				innerText: "🔍",
 				title: "Search by this video's title",
 				style: "cursor: grab;",
 				id: IDS.SEARCH_BTN,
-				onclick(event: Event)
+				onclick()
 				{
-					event.preventDefault();
 					urlUtils.navigate(
 						`https://youtube.com/results?search_query=${encodeURIComponent(
-							pageUtils
-								.queryElement(titleQuery)
-								.textContent
-								.split(btnText)
-								.join("")
+							pageUtils.queryElement(titleQuery).textContent
 						)}`
 					);
 				}
 			}
 		);
-	GLOBAL_AWAITER.addQuery(
+	queryAwaiter.addQuery(
 		titleQuery,
 		function (result: NodeList)
 		{
 			if (!(result instanceof NodeList))
 				return;
 			logger.print(result[0]);
-			if (result[0].firstChild)
-				(result[0] as Element).insertBefore(
-					searchBtn,
-					result[0].firstChild
-				);
-			else
-				result[0].appendChild(searchBtn);
+			result[0].parentElement.prepend(searchBtn);
 		}
 	);
 	return true;
@@ -78,7 +67,6 @@ export function addSearchBtn(this: modules.PageModule)
 
 export function removeSearchBtn(this: modules.PageModule)
 {
-	this.logger.print(this, IDS);
 	for (let id of Object.values(IDS))
 		this.utils.pageUtils.removeElementById(id);
 

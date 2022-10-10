@@ -1,12 +1,13 @@
-import { utils, modules } from "userscriptbase";
+import { utils } from "userscriptbase";
 
+import type { modules } from "userscriptbase";
 import type { IYTCustomEvent } from "../../types/CustomEvent";
 
 //TODO: Fix custom playlist stats module shitting itself if playlist is too long.
 /**
  * Adds the total and estimated remaining time of the current playlist.
  */
-export default function initCustomPlaylistRuntimeDisplay(this: modules.PageModule, payload: IYTCustomEvent)
+export default function addPLStats(this: modules.PageModule, payload: IYTCustomEvent)
 {
 	let playlistSeconds: { total: number; remaining: number; } = payload
 		.detail
