@@ -4,7 +4,7 @@
 // @match       https://www.youtube.com/**
 // @grant       GM_info
 // @grant       GM_openInTab
-// @version     1.6.1
+// @version     1.6.2
 // @author      -
 // @inject-into page
 // @run-at      document-start
