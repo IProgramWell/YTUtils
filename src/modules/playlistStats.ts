@@ -3,13 +3,60 @@ import { utils } from "userscriptbase";
 import type { modules } from "userscriptbase";
 import type { IYTCustomEvent } from "../../types/CustomEvent";
 
-//TODO: Fix custom playlist stats module shitting itself if playlist is too long.
+interface IPlaylistData
+{
+	total: number;
+	remaining: number;
+}
+const STATE_KEYS = {
+	TOTAL_RUNTIME: "totalRuntime",
+	REMAINING_RUNTIME: "remainingRuntime",
+};
+
+function playlistDataReduceFunc(
+	playlist: IPlaylistData,
+	video: any
+)
+{
+	if (!video.playlistVideoRenderer)
+		return playlist;
+	let total = Number.parseInt(video.playlistVideoRenderer.lengthSeconds),
+		percentage = video
+			.playlistVideoRenderer
+			?.thumbnailOverlays[1]
+			?.thumbnailOverlayResumePlaybackRenderer
+			?.percentDurationWatched || 0,
+		remaining = total - (total * percentage / 100);
+
+	playlist.total += total;
+	playlist.remaining += remaining;
+	return playlist;
+}
+
+function getPlaylistStats(playlistData: IPlaylistData)
+{
+	return [
+		{
+			runs: [
+				{ text: "Runtime: " },
+				{ text: utils.DateUtils.getTimeString(playlistData.total) },
+			],
+		},
+		{
+			runs: [
+				{ text: "Estimated remaining: " },
+				{ text: utils.DateUtils.getTimeString(playlistData.remaining) },
+			],
+		},
+	];
+}
+
 /**
  * Adds the total and estimated remaining time of the current playlist.
  */
-export default function addPLStats(this: modules.PageModule, payload: IYTCustomEvent)
+export function addPLStats(this: modules.PageModule, payload: IYTCustomEvent)
 {
-	let playlistSeconds: { total: number; remaining: number; } = payload
+	const playlistData: IPlaylistData = payload
 		.detail
 		.pageData
 		.response
@@ -25,35 +72,29 @@ export default function addPLStats(this: modules.PageModule, payload: IYTCustomE
 		.playlistVideoListRenderer
 		.contents
 		.reduce(
-			(
-				playlist: typeof playlistSeconds,
-				video: any
-			): typeof playlistSeconds =>
+			playlistDataReduceFunc,
 			{
-				/* if (!video.playlistVideoRenderer)
-					return playlist; */
-				let total = Number.parseInt(video.playlistVideoRenderer.lengthSeconds),
-					percentage = video
-						.playlistVideoRenderer
-						?.thumbnailOverlays[1]
-						?.thumbnailOverlayResumePlaybackRenderer
-						?.percentDurationWatched || 0,
-					remaining = total - (total * percentage / 100);
+				total: this.getStateValue(STATE_KEYS.TOTAL_RUNTIME, 0),
+				remaining: this.getStateValue(STATE_KEYS.REMAINING_RUNTIME, 0),
+			}
+		),
+		customStats = getPlaylistStats(playlistData);
 
-				playlist.total += total;
-				playlist.remaining += remaining;
-				return playlist;
-			},
-			{ total: 0, remaining: 0, }
-		)
-
-	let runtimeString = `Runtime: ${utils.DateUtils.getTimeString(playlistSeconds.total)}`,
-		remainingString = `Estimated remaining: ${utils.DateUtils.getTimeString(playlistSeconds.remaining)}`;
+	this.setStateValue(STATE_KEYS.TOTAL_RUNTIME, playlistData.total);
+	this.setStateValue(STATE_KEYS.REMAINING_RUNTIME, playlistData.remaining);
 
 	this.logger.print({
-		playlistSeconds,
-		runtimeString,
-		remainingString
+		playlistData,
+		customStats,
+		stats: payload
+			.detail
+			.pageData
+			.response
+			.sidebar
+			.playlistSidebarRenderer
+			.items[0]
+			.playlistSidebarPrimaryInfoRenderer
+			.stats
 	});
 
 	payload
@@ -65,11 +106,58 @@ export default function addPLStats(this: modules.PageModule, payload: IYTCustomE
 		.items[0]
 		.playlistSidebarPrimaryInfoRenderer
 		.stats
-		.push(
-			{ simpleText: runtimeString },
-			{ simpleText: remainingString }
-		);
+		.push(...customStats);
 	this.logger.print("Added time to playlist!");
 
 	this.isActive = true;
+}
+
+export function updateStats(this: modules.PageModule, payload: Event & { detail: any })
+{
+	if (!(payload
+		?.detail
+		?.data
+		?.onResponseReceivedActions
+		?.[0]
+		?.appendContinuationItemsAction
+		?.continuationItems
+	))
+		return;
+
+	const playlistData: IPlaylistData = payload
+		.detail
+		.data
+		.onResponseReceivedActions[0]
+		.appendContinuationItemsAction
+		.continuationItems
+		.reduce(
+			playlistDataReduceFunc,
+			{
+				total: this.getStateValue(STATE_KEYS.TOTAL_RUNTIME, 0),
+				remaining: this.getStateValue(STATE_KEYS.REMAINING_RUNTIME, 0),
+			}
+		),
+		customStats = getPlaylistStats(playlistData);
+	let statName: { text: string; }, statValue: { text: string; }, statValueNode: Node;
+	this.setStateValue(STATE_KEYS.TOTAL_RUNTIME, playlistData.total);
+	this.setStateValue(STATE_KEYS.REMAINING_RUNTIME, playlistData.remaining);
+	for (let stat of customStats)
+	{
+		[statName, statValue] = stat.runs;
+		statValueNode = this
+			.utils
+			.pageUtils
+			.evaluate(
+				`//*[@id="stats"]/yt-formatted-string/span[text() = "${statName.text}"]`,
+				document.body ?? document,
+				null,
+				XPathResult.ANY_UNORDERED_NODE_TYPE,
+				null
+			)
+			.singleNodeValue
+			.parentElement
+			.lastChild;
+		statValueNode.textContent = statValue.text;
+	}
+
 }
