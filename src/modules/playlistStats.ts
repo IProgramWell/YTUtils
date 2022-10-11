@@ -112,6 +112,7 @@ export function addPLStats(this: modules.PageModule, payload: IYTCustomEvent)
 	this.isActive = true;
 }
 
+// FIXME: Stats not updating either after first update/continuation, or if there are less than 100 videos in response.
 export function updateStats(this: modules.PageModule, payload: Event & { detail: any })
 {
 	if (!(payload
