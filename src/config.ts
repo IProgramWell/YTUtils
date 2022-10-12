@@ -11,5 +11,4 @@ export const CUSTOM_YT_EVENTS = {
 	"yt-page-data-fetched": "onPageDataFetch",
 	"yt-navigate-finish": "onNavigateFinish",
 	"yt-service-request-completed": "onServiceReqCompleted",
-	"data-changed": "onDataChanged"
 };

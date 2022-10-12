@@ -112,7 +112,7 @@ export function addPLStats(this: modules.PageModule, payload: IYTCustomEvent)
 	this.isActive = true;
 }
 
-// FIXME: Stats not updating either after first update/continuation, or if there are less than 100 videos in response.
+// FIXME: Stats not updating if there are less than 100 videos in response.
 export function updateStats(this: modules.PageModule, payload: Event & { detail: any })
 {
 	if (!(payload
@@ -142,6 +142,7 @@ export function updateStats(this: modules.PageModule, payload: Event & { detail:
 	let statName: { text: string; }, statValue: { text: string; }, statValueNode: Node;
 	this.setStateValue(STATE_KEYS.TOTAL_RUNTIME, playlistData.total);
 	this.setStateValue(STATE_KEYS.REMAINING_RUNTIME, playlistData.remaining);
+	this.logger.print({ playlistData, customStats });
 	for (let stat of customStats)
 	{
 		[statName, statValue] = stat.runs;
