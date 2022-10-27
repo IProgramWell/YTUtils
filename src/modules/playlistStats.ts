@@ -16,7 +16,7 @@ const STATE_KEYS = {
 function playlistDataReduceFunc(
 	playlist: IPlaylistData,
 	video: any
-)
+): IPlaylistData
 {
 	if (!video.playlistVideoRenderer)
 		return playlist;
@@ -33,7 +33,7 @@ function playlistDataReduceFunc(
 	return playlist;
 }
 
-function getPlaylistStats(playlistData: IPlaylistData)
+function getPlaylistStats(playlistData: IPlaylistData): { runs: { text: string; }[]; }[]
 {
 	return [
 		{
@@ -54,7 +54,7 @@ function getPlaylistStats(playlistData: IPlaylistData)
 /**
  * Adds the total and estimated remaining time of the current playlist.
  */
-export function addPLStats(this: modules.PageModule, payload: IYTCustomEvent)
+export function addPLStats(this: modules.PageModule, payload: IYTCustomEvent): void
 {
 	const playlistData: IPlaylistData = payload
 		.detail
@@ -113,7 +113,7 @@ export function addPLStats(this: modules.PageModule, payload: IYTCustomEvent)
 }
 
 // FIXME: Stats not updating if there are less than 100 videos in response.
-export function updateStats(this: modules.PageModule, payload: Event & { detail: any })
+export function updateStats(this: modules.PageModule, payload: Event & { detail: any }): void
 {
 	if (!(payload
 		?.detail

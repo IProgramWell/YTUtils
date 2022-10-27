@@ -21,7 +21,7 @@ for (let [eventName, moduleEventName] of Object.entries(CUSTOM_YT_EVENTS))
 {
 	globalThis.addEventListener(
 		eventName,
-		function (payload)
+		function (payload): void
 		{
 			ModuleUtils.callAllModulesMethod({
 				moduleList,
@@ -34,7 +34,7 @@ for (let [eventName, moduleEventName] of Object.entries(CUSTOM_YT_EVENTS))
 }
 globalThis.addEventListener(
 	"load",
-	function ()
+	function (): void
 	{
 		ModuleUtils.onModuleEvent({
 			moduleList,
@@ -46,7 +46,7 @@ globalThis.addEventListener(
 globalThis.addEventListener(
 	// "yt-page-type-changed",
 	"yt-navigate-finish",
-	function (/* event */)
+	function (/* event */): void
 	{
 		const currentLocation = URLUtils.getCurrentLocation();
 		GLOBAL_MANAGER.print(`Changed url! New url: "${currentLocation.href}"`);

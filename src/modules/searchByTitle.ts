@@ -4,7 +4,7 @@ import type { IYTPlayerEvent } from "../../types/CustomEvent";
 const IDS = { SEARCH_BTN: "ytutils-searchbytitle-searchbtn" };
 const STATE_KEYS = { VIDEO_TITLE: "videoTitle" };
 
-export function updateTitleState(this: modules.PageModule, event: IYTPlayerEvent)
+export function updateTitleState(this: modules.PageModule, event: IYTPlayerEvent): void
 {
 	this?.setStateValue?.(
 		STATE_KEYS.VIDEO_TITLE,
@@ -12,7 +12,7 @@ export function updateTitleState(this: modules.PageModule, event: IYTPlayerEvent
 	);
 }
 
-export function addSearchBtn(this: modules.PageModule)
+export function addSearchBtn(this: modules.PageModule): boolean
 {
 	const {
 		utils: {
@@ -33,7 +33,7 @@ export function addSearchBtn(this: modules.PageModule)
 			title: "Search by this video's title",
 			style: "cursor: grab;",
 			id: IDS.SEARCH_BTN,
-			onclick()
+			onclick(): void
 			{
 				urlUtils.navigate(
 					`https://youtube.com/results?search_query=${encodeURIComponent(
@@ -47,14 +47,14 @@ export function addSearchBtn(this: modules.PageModule)
 		{
 			xpath: "//*[@id=\"container\"]/h1/yt-formatted-string[text()]",
 			contextNode: document.body ?? document,
-			isValidResult(result)
+			isValidResult(result): boolean
 			{
 				try { return !!result.singleNodeValue; }
 				catch (_) { return false; }
 			},
 			resultType: XPathResult.ANY_UNORDERED_NODE_TYPE
 		},
-		function (result)
+		function (result): void
 		{
 			logger.print(result.singleNodeValue);
 			result.singleNodeValue.parentElement.append(searchBtn);
@@ -63,7 +63,7 @@ export function addSearchBtn(this: modules.PageModule)
 	return true;
 }
 
-export function removeSearchBtn(this: modules.PageModule)
+export function removeSearchBtn(this: modules.PageModule): boolean
 {
 	for (let id of Object.values(IDS))
 		this.utils.pageUtils.removeElementById(id);

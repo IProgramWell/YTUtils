@@ -6,7 +6,7 @@ const IDS = {
 	noPLButtonID: "ytutils-noplaylist-noplbtn",
 };
 
-export function addNoPLControls(this: modules.PageModule)
+export function addNoPLControls(this: modules.PageModule): boolean
 {
 	const { urlUtils, pageUtils } = this.utils;
 	const NO_PL_CTRL_CONTAINER = pageUtils.queryElement(".ytp-right-controls");
@@ -39,7 +39,7 @@ export function addNoPLControls(this: modules.PageModule)
 			// className: "ytp-button",
 			id: IDS.noPLButtonID,
 			title: "Watch outside playlist",
-			onclick()
+			onclick(): void
 			{
 				let searchParams = pageUtils.getSearchParams();
 				if (pageUtils.queryElement<HTMLInputElement>(`#${IDS.newTabCheckboxID}`)?.checked)
@@ -61,7 +61,7 @@ export function addNoPLControls(this: modules.PageModule)
 	return true;
 }
 
-export function removeNoPLControls(this: modules.PageModule)
+export function removeNoPLControls(this: modules.PageModule): boolean
 {
 	for (let id of Object.values(IDS))
 		this.utils.pageUtils.removeElementById(id);

@@ -1,4 +1,4 @@
-export default function noShortsOnURLChange(this: import("userscriptbase").modules.PageModule)
+export default function noShortsOnURLChange(this: import("userscriptbase").modules.PageModule): boolean
 {
 	const [_, section, shortsID] = this
 		.utils
