@@ -51,6 +51,7 @@ function getPlaylistStats(playlistData: IPlaylistData): { runs: { text: string; 
 	];
 }
 
+// TODO: figure out what broke when yt changed their shit.
 /**
  * Adds the total and estimated remaining time of the current playlist.
  */
@@ -112,7 +113,7 @@ export function addPLStats(this: modules.PageModule, payload: IYTCustomEvent): v
 	this.isActive = true;
 }
 
-// FIXME: Stats not updating if there are less than 100 videos in response.
+// BUG: Stats not updating if there are less than 100 videos in response.
 export function updateStats(this: modules.PageModule, payload: Event & { detail: any }): void
 {
 	if (!(payload
@@ -139,18 +140,18 @@ export function updateStats(this: modules.PageModule, payload: Event & { detail:
 			}
 		),
 		customStats = getPlaylistStats(playlistData);
-	let statName: { text: string; }, statValue: { text: string; }, statValueNode: Node;
+	let statName: { text: string; }, statValue: { text: string; };
 	this.setStateValue(STATE_KEYS.TOTAL_RUNTIME, playlistData.total);
 	this.setStateValue(STATE_KEYS.REMAINING_RUNTIME, playlistData.remaining);
 	this.logger.print({ playlistData, customStats });
 	for (let stat of customStats)
 	{
 		[statName, statValue] = stat.runs;
-		statValueNode = this
+		this
 			.utils
 			.pageUtils
 			.evaluate(
-				`//*[@id="stats"]/yt-formatted-string/span[text() = "${statName.text}"]`,
+				`//ytd-playlist-byline-renderer/div/yt-formatted-string/span[text() = "${statName.text}"]`,
 				document.body ?? document,
 				null,
 				XPathResult.ANY_UNORDERED_NODE_TYPE,
@@ -158,8 +159,8 @@ export function updateStats(this: modules.PageModule, payload: Event & { detail:
 			)
 			.singleNodeValue
 			.parentElement
-			.lastChild;
-		statValueNode.textContent = statValue.text;
+			.lastChild
+			.textContent = statValue.text;
 	}
 
 }

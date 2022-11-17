@@ -11,4 +11,9 @@ export const CUSTOM_YT_EVENTS = {
 	"yt-page-data-fetched": "onPageDataFetch",
 	"yt-navigate-finish": "onNavigateFinish",
 	"yt-service-request-completed": "onServiceReqCompleted",
+	"yt-navigate-redirect": "onNavigateRedirect",
+	"yt-app-context": "onAppContext",
+	"yt-get-context-provider": "onContextProviderGet",
+	"yt-playlist-reloading": "playlistReloading",
+	"yt-playlist-data-updated": "onPlaylistUpdated",
 };
