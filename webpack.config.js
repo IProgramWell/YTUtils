@@ -41,8 +41,9 @@ module.exports = {
 				terserOptions: {
 					format: {
 						preamble: Metadata.generateMetadataBlock(MODE, true),
-					}
-				}
+					},
+					mangle: { properties: MODE === "production", }
+				},
 			})
 		]
 	},
