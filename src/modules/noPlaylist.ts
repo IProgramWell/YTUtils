@@ -10,9 +10,12 @@ export function addNoPLControls(this: modules.PageModule): boolean
 {
 	const { urlUtils, pageUtils } = this.utils;
 	const NO_PL_CTRL_CONTAINER = pageUtils.queryElement(".ytp-right-controls");
+	const SEARCH_PARAMS = pageUtils.getSearchParams();
+	const centered = "float: left; top: 50%; white-space: nowrap;";
 	if (!NO_PL_CTRL_CONTAINER)
 		return false;
-	const centered = "float: left; top: 50%; white-space: nowrap;";
+	if (!SEARCH_PARAMS.list)
+		return false;
 
 	const newTabCheckbox = pageUtils.createElement(
 		"input",

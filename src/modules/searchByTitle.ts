@@ -46,7 +46,7 @@ export function addSearchBtn(this: modules.PageModule): boolean
 	queryAwaiter.addXpath(
 		{
 			xpath: "//div[@id=\"title\"]/h1/yt-formatted-string[text()]",
-			contextNode: document.body ?? document,
+			contextNode: pageUtils.BODY ?? pageUtils.DOCUMENT,
 			isValidResult(result): boolean
 			{
 				try { return !!result.singleNodeValue; }

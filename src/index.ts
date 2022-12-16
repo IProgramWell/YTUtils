@@ -12,6 +12,7 @@ for (
 		moduleList,
 		eventHandlerName,
 		handlerArgs: [],
+		onlyIfShouldBeActive: false,
 	});
 }
 for (let [eventName, moduleEventName] of Object.entries(CUSTOM_YT_EVENTS))

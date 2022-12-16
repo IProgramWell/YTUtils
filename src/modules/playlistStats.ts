@@ -126,6 +126,7 @@ export function updateStats(this: modules.PageModule, payload: Event & { detail:
 	))
 		return;
 
+	const { BODY, DOCUMENT } = this.utils.pageUtils;
 	const playlistData: IPlaylistData = payload
 		.detail
 		.data
@@ -152,7 +153,7 @@ export function updateStats(this: modules.PageModule, payload: Event & { detail:
 			.pageUtils
 			.evaluate(
 				`//ytd-playlist-byline-renderer/div/yt-formatted-string/span[text() = "${statName.text}"]`,
-				document.body ?? document,
+				BODY ?? DOCUMENT,
 				null,
 				XPathResult.ANY_UNORDERED_NODE_TYPE,
 				null

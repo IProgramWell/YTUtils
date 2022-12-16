@@ -2,14 +2,16 @@ import { modules, utils } from "userscriptbase";
 
 import { GLOBAL_AWAITER, CUSTOM_YT_EVENTS } from "../config";
 import * as playlistStats from "./playlistStats";
-import noShortsOnURLChange from "./noShorts";
+import * as noShorts from "./noShorts";
 import * as noPlaylist from "./noPlaylist";
 import * as searchByTitle from "./searchByTitle";
 
 export default [
 	new modules.PageModule({
-		eventHandlers: { onModuleStart: noShortsOnURLChange, },
-		shouldBeActive: modules.ModuleUtils.activateForRegex(/^\/shorts\/.*\/?$/i),
+		eventHandlers: {
+			onModuleStart: noShorts.noShortsOnURLChange,
+		},
+		shouldBeActive: modules.ModuleUtils.activateForRegex(noShorts.SHORTS_REGEX),
 		moduleName: "No Shorts Redirector",
 	}),
 	new modules.PageModule({
