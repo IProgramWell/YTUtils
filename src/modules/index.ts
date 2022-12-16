@@ -9,7 +9,7 @@ import * as searchByTitle from "./searchByTitle";
 export default [
 	new modules.PageModule({
 		eventHandlers: { onModuleStart: noShorts.noShortsOnURLChange, },
-		shouldBeActive: modules.ModuleUtils.activateForRegex(noShorts.SHORTS_REGEX),
+		shouldBeActive: modules.ModuleUtils.activateForRegex(/^\/shorts\/.+$/i),
 		moduleName: "No Shorts Redirector",
 	}),
 	new modules.PageModule({

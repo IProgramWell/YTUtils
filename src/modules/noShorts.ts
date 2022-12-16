@@ -1,6 +1,5 @@
 import type { modules } from "userscriptbase";
 
-export const SHORTS_REGEX = /^\/shorts\/\.+$/i;
 export function noShortsOnURLChange(this: modules.PageModule): boolean
 {
 	const [_, section, shortsID] = this
