@@ -1,16 +1,6 @@
 import type { modules } from "userscriptbase";
-import type { IYTPlayerEvent } from "../../types/CustomEvent";
 
 const IDS = { SEARCH_BTN: "ytutils-searchbytitle-searchbtn" };
-const STATE_KEYS = { VIDEO_TITLE: "videoTitle" };
-
-export function updateTitleState(this: modules.PageModule, event: IYTPlayerEvent): void
-{
-	this?.setStateValue?.(
-		STATE_KEYS.VIDEO_TITLE,
-		event.detail.pageData.playerResponse.videoDetails.title
-	);
-}
 
 export function addSearchBtn(this: modules.PageModule): boolean
 {
@@ -20,8 +10,7 @@ export function addSearchBtn(this: modules.PageModule): boolean
 			urlUtils,
 			queryAwaiter
 		},
-		logger,
-		getStateValue
+		logger
 	} = this;
 	if (!queryAwaiter)
 		return false;
@@ -37,7 +26,15 @@ export function addSearchBtn(this: modules.PageModule): boolean
 			{
 				urlUtils.navigate(
 					`https://youtube.com/results?search_query=${encodeURIComponent(
-						getStateValue?.(STATE_KEYS.VIDEO_TITLE, null)
+						pageUtils.evaluate(
+							"//div[@id=\"title\"]/h1/yt-formatted-string[text()]",
+							pageUtils.BODY ?? pageUtils.DOCUMENT,
+							null,
+							XPathResult.ANY_UNORDERED_NODE_TYPE,
+							null
+						)
+							.singleNodeValue
+							.textContent
 					)}`
 				);
 			}

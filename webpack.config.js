@@ -42,7 +42,11 @@ module.exports = {
 					format: {
 						preamble: Metadata.generateMetadataBlock(MODE, true),
 					},
-					mangle: { properties: MODE === "production", }
+					mangle: /* MODE === "production", */{
+						properties: {
+							keep_quoted: true,
+						},
+					},
 				},
 			})
 		]

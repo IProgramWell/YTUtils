@@ -4,16 +4,14 @@ export const GLOBAL_AWAITER = new utils.QueryAwaiter({
 	autoStart: true,
 	target: document
 });
-/**
- * Maps youtube event names to handler names
- */
-export const CUSTOM_YT_EVENTS = {
-	"yt-page-data-fetched": "onPageDataFetch",
-	"yt-navigate-finish": "onNavigateFinish",
-	"yt-service-request-completed": "onServiceReqCompleted",
-	"yt-navigate-redirect": "onNavigateRedirect",
-	"yt-app-context": "onAppContext",
-	"yt-get-context-provider": "onContextProviderGet",
-	"yt-playlist-reloading": "playlistReloading",
-	"yt-playlist-data-updated": "onPlaylistUpdated",
-};
+
+export const CUSTOM_YT_EVENTS = [
+	"yt-page-data-fetched",
+	"yt-navigate-finish",
+	"yt-service-request-completed",
+	"yt-navigate-redirect",
+	"yt-app-context",
+	"yt-get-context-provider",
+	"yt-playlist-reloading",
+	"yt-playlist-data-updated",
+];

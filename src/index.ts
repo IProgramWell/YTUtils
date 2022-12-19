@@ -15,7 +15,7 @@ for (
 		onlyIfShouldBeActive: false,
 	});
 }
-for (let [eventName, moduleEventName] of Object.entries(CUSTOM_YT_EVENTS))
+for (let eventName of CUSTOM_YT_EVENTS)
 {
 	globalThis.addEventListener(
 		eventName,
@@ -23,7 +23,7 @@ for (let [eventName, moduleEventName] of Object.entries(CUSTOM_YT_EVENTS))
 		{
 			modules.ModuleUtils.callAllModulesMethod({
 				moduleList,
-				methodName: moduleEventName,
+				methodName: eventName,
 				methodArgs: [payload],
 				onlyIfShouldBeActive: true,
 			});

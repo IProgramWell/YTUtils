@@ -1,6 +1,6 @@
 import { modules, utils } from "userscriptbase";
 
-import { GLOBAL_AWAITER, CUSTOM_YT_EVENTS } from "../config";
+import { GLOBAL_AWAITER, } from "../config";
 import * as playlistStats from "./playlistStats";
 import * as noShorts from "./noShorts";
 import * as noPlaylist from "./noPlaylist";
@@ -14,8 +14,8 @@ export default [
 	}),
 	new modules.PageModule({
 		methods: {
-			[CUSTOM_YT_EVENTS["yt-page-data-fetched"]]: playlistStats.addPLStats,
-			[CUSTOM_YT_EVENTS["yt-service-request-completed"]]: playlistStats.updateStats,
+			"yt-page-data-fetched": playlistStats.addPLStats,
+			"yt-service-request-completed": playlistStats.updateStats,
 		},
 		shouldBeActive: modules.ModuleUtils.activateForRegex(/^\/playlist\/?$/i),
 		moduleName: "Custom Playlist Statistics",
@@ -34,7 +34,6 @@ export default [
 			onModuleStart: searchByTitle.addSearchBtn,
 			onModuleStop: searchByTitle.removeSearchBtn,
 		},
-		methods: { [CUSTOM_YT_EVENTS["yt-page-data-fetched"]]: searchByTitle.updateTitleState, },
 		shouldBeActive: modules.ModuleUtils.activateForRegex(/^\/watch\/?$/),
 		moduleName: "Search by title",
 		utils: {
