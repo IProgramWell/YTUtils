@@ -1,7 +1,7 @@
 import { modules, utils } from "userscriptbase";
 
 import { GLOBAL_AWAITER, } from "../config";
-import * as playlistStats from "./playlistStats";
+// import * as playlistStats from "./playlistStats";
 import * as noShorts from "./noShorts";
 import * as noPlaylist from "./noPlaylist";
 import * as searchByTitle from "./searchByTitle";
@@ -12,14 +12,14 @@ export default [
 		shouldBeActive: modules.ModuleUtils.activateForRegex(/^\/shorts\/.+$/i),
 		moduleName: "No Shorts Redirector",
 	}),
-	new modules.PageModule({
+	/* new modules.PageModule({
 		methods: {
 			"yt-page-data-fetched": playlistStats.addPLStats,
 			"yt-service-request-completed": playlistStats.updateStats,
 		},
 		shouldBeActive: modules.ModuleUtils.activateForRegex(/^\/playlist\/?$/i),
 		moduleName: "Custom Playlist Statistics",
-	}),
+	}), */
 	new modules.PageModule({
 		eventHandlers: {
 			onDocumentLoad: noPlaylist.addNoPLControls,

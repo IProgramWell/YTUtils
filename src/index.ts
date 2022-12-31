@@ -16,7 +16,6 @@ for (
 	});
 }
 for (let eventName of CUSTOM_YT_EVENTS)
-{
 	globalThis.addEventListener(
 		eventName,
 		function (payload): void
@@ -29,7 +28,6 @@ for (let eventName of CUSTOM_YT_EVENTS)
 			});
 		}
 	);
-}
 globalThis.addEventListener(
 	"load",
 	function (): void

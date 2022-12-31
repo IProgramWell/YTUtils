@@ -1,17 +1,16 @@
-const Path = require("path"); // required for path resolution for dist folder
-const Webpack = require("webpack"); // used to access the BannerPlugin
+const Path = require("path");
 const TerserPlugin = require("terser-webpack-plugin");
 
 const Metadata = require("./metadata");
 
-/** @type {Webpack.Configuration["mode"]} */
+/** @type {import("webpack").Configuration["mode"]} */
 const MODE = [
 	"development",
 	"none",
 	"production"
 ]
-	.includes(process.env.NODE_ENV)
-	? process.env.NODE_ENV
+	.includes(process.env.NODE_ENV?.toLowerCase?.())
+	? process.env.NODE_ENV?.toLowerCase?.()
 	: "production";
 
 /** @type {import("webpack").Configuration} */
@@ -42,7 +41,7 @@ module.exports = {
 					format: {
 						preamble: Metadata.generateMetadataBlock(MODE, true),
 					},
-					mangle: /* MODE === "production", */{
+					mangle: {
 						properties: {
 							keep_quoted: true,
 						},

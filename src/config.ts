@@ -7,11 +7,11 @@ export const GLOBAL_AWAITER = new utils.QueryAwaiter({
 
 export const CUSTOM_YT_EVENTS = [
 	"yt-page-data-fetched",
-	"yt-navigate-finish",
 	"yt-service-request-completed",
-	"yt-navigate-redirect",
-	"yt-app-context",
-	"yt-get-context-provider",
-	"yt-playlist-reloading",
-	"yt-playlist-data-updated",
+	"yt-navigate-finish",
+	// "yt-app-context",
+	// "yt-playlist-data-updated",
+	// "yt-navigate-redirect",
+	// "yt-get-context-provider",
+	// "yt-playlist-reloading",
 ];

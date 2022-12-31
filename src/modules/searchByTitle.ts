@@ -12,6 +12,7 @@ export function addSearchBtn(this: modules.PageModule): boolean
 		},
 		logger
 	} = this;
+	const TITLE_XPATH = "//div[@id=\"title\"]/h1/yt-formatted-string[text()]";
 	if (!queryAwaiter)
 		return false;
 
@@ -27,8 +28,8 @@ export function addSearchBtn(this: modules.PageModule): boolean
 				urlUtils.navigate(
 					`https://youtube.com/results?search_query=${encodeURIComponent(
 						pageUtils.evaluate(
-							"//div[@id=\"title\"]/h1/yt-formatted-string[text()]",
-							pageUtils.BODY ?? pageUtils.DOCUMENT,
+							TITLE_XPATH,
+							document.body ?? document,
 							null,
 							XPathResult.ANY_UNORDERED_NODE_TYPE,
 							null
@@ -42,8 +43,8 @@ export function addSearchBtn(this: modules.PageModule): boolean
 	);
 	queryAwaiter.addXpath(
 		{
-			xpath: "//div[@id=\"title\"]/h1/yt-formatted-string[text()]",
-			contextNode: pageUtils.BODY ?? pageUtils.DOCUMENT,
+			xpath: TITLE_XPATH,
+			contextNode: document.body ?? document,
 			isValidResult(result): boolean
 			{
 				try { return !!result.singleNodeValue; }

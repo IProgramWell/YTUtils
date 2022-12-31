@@ -7,10 +7,7 @@ const METADATA_COMMON = {
 	name: "YT Utils",
 	namespace: "Violentmonkey Scripts",
 	match: ["https://www.youtube.com/**"],
-	grant: [
-		"GM_info",
-		"GM_openInTab",
-	],
+	grant: ["GM_info", "GM_openInTab"],
 	version: "1.6.5",
 	author: "-",
 	"inject-into": "page",
@@ -79,10 +76,15 @@ function generateMetadataBlock(mode = "production", spaceEvently = true)
 {
 	/** @type {string[]} */
 	const MetadataSegments = [];
+
 	/** @type {Metadata} */
-	let metadata;
-	/** @type {string} */
-	let currentValue;
+	let metadata,
+		/** @type {string} */
+		currentValue,
+		/** @type {string} */
+		keySuffix,
+		/** @type {number} */
+		maxKeyLength = 0;
 
 	switch (mode)
 	{
@@ -104,14 +106,9 @@ function generateMetadataBlock(mode = "production", spaceEvently = true)
 			break;
 	}
 
-	let maxKeyLength = Object
-		.keys(metadata)
-		.reduce(
-			(max, key) =>
-				Math.max(max, key.length),
-			0
-		),
-		keySuffix;
+	for (let key in metadata)
+		if (key.length > maxKeyLength)
+			maxKeyLength = key.length;
 
 	for (let key in metadata)
 	{
@@ -142,6 +139,7 @@ const BLOCK_REGEX = /^\/\/\W?(==\/?UserScript==|@\W?\w+\W*.*)/i;
 module.exports = {
 	METADATA_COMMON,
 	METADATA_PROD,
+	METADATA_DEV,
 	TAG_TO_STRING,
 	generateMetadataBlock,
 	BLOCK_REGEX,
