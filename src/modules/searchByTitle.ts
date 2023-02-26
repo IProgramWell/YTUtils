@@ -45,14 +45,14 @@ export function addSearchBtn(this: modules.PageModule): boolean
 		{
 			xpath: TITLE_XPATH,
 			contextNode: document.body ?? document,
-			isValidResult(result): boolean
+			isValidResult(result: XPathResult): boolean
 			{
 				try { return !!result.singleNodeValue; }
 				catch (_) { return false; }
 			},
 			resultType: XPathResult.ANY_UNORDERED_NODE_TYPE
 		},
-		function (result): void
+		function (result: XPathResult): void
 		{
 			logger.print(result.singleNodeValue);
 			result.singleNodeValue.parentElement.append(searchBtn);
