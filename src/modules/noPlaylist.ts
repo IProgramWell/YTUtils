@@ -24,7 +24,7 @@ export function addNoPLControls(this: modules.PageModule): boolean
 			title: "Open in new tab",
 		}
 	);
-	const newtabcheckboxLabel = pageUtils.createElement(
+	const newTabCheckboxLabel = pageUtils.createElement(
 		"label",
 		{
 			htmlFor: IDS.newTabCheckboxID,
@@ -43,9 +43,9 @@ export function addNoPLControls(this: modules.PageModule): boolean
 			{
 				let searchParams = pageUtils.getSearchParams();
 				if (pageUtils.queryElement<HTMLInputElement>(`#${IDS.newTabCheckboxID}`)?.checked)
-					urlUtils.openNewTab(`https://youtube.com/watch?v=${searchParams["v"]}`);
+					urlUtils.openNewTab(`https://youtube.com/watch?v=${searchParams.get("v")}`);
 				else
-					urlUtils.setLocationAttribute("search", `?v=${searchParams["v"]}`);
+					urlUtils.setLocationAttribute("search", `?v=${searchParams.get("v")}`);
 			},
 			innerHTML: "No Playlist",
 			style: centered,
@@ -54,7 +54,7 @@ export function addNoPLControls(this: modules.PageModule): boolean
 
 	NO_PL_CTRL_CONTAINER.prepend(
 		newTabCheckbox,
-		newtabcheckboxLabel,
+		newTabCheckboxLabel,
 		redirectButton
 	);
 
@@ -81,6 +81,6 @@ export function shouldBeActiveFor(this: modules.PageModule, url?: string | URL |
 	return (
 		/\/watch\/?/i.test(URL_TO_CHECK.pathname) &&
 		//If the current video is NOT played from a playlist, do nothing.
-		!!this.utils.pageUtils.getSearchParams(URL_TO_CHECK)["list"]
+		!!this.utils.pageUtils.getSearchParams(URL_TO_CHECK).get("list")
 	);
 }

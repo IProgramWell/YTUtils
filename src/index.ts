@@ -11,7 +11,6 @@ for (
 	modules.ModuleUtils.onModuleEvent({
 		moduleList,
 		eventHandlerName,
-		handlerArgs: [],
 		onlyIfShouldBeActive: false,
 	});
 }
@@ -35,7 +34,6 @@ globalThis.addEventListener(
 		modules.ModuleUtils.onModuleEvent({
 			moduleList,
 			eventHandlerName: "onDocumentLoad",
-			handlerArgs: [],
 		});
 	}
 );
