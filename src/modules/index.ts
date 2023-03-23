@@ -1,4 +1,4 @@
-import { modules, utils } from "userscriptbase";
+import { modules, } from "userscriptbase";
 
 import { GLOBAL_AWAITER, } from "../config";
 // import * as playlistStats from "./playlistStats";
@@ -36,10 +36,26 @@ export default [
 		},
 		shouldBeActive: modules.ModuleUtils.activateForRegex(/^\/watch\/?$/),
 		moduleName: "Search by title",
-		utils: {
-			pageUtils: utils.PageUtils,
-			urlUtils: utils.URLUtils,
-			queryAwaiter: GLOBAL_AWAITER,
+		utils: { queryAwaiter: GLOBAL_AWAITER, },
+	}),
+	new modules.PageModule({
+		eventHandlers: {
+			onModuleStart(this: modules.PageModule)
+			{
+				if (!this.utils?.queryAwaiter)
+					return false;
+				this.utils.queryAwaiter.addQuery(
+					"div#masthead-ad",
+					function (ads: NodeList)
+					{
+						for (let i = 0; i < ads.length; i++)
+							ads[i].parentNode.removeChild(ads[i]);
+					}
+				);
+				return true;
+			}
 		},
+		utils: { queryAwaiter: GLOBAL_AWAITER, },
+		shouldBeActive: modules.ModuleUtils.activateForRegex(/^\/?$/),
 	}),
 ];

@@ -5,7 +5,7 @@ module.exports = require("userscriptbase/webpackUtils").getWebpackConfig(
 		name: "YT Utils",
 		namespace: "Violentmonkey Scripts",
 		match: ["https://www.youtube.com/**"],
-		grant: ["GM_info", "GM_openInTab"],
+		grant: ["GM_openInTab"],
 		version: "1.6.5",
 		author: "-",
 		"inject-into": "page",
@@ -23,4 +23,4 @@ module.exports = require("userscriptbase/webpackUtils").getWebpackConfig(
 		.includes(ENV_MODE)
 		? ENV_MODE
 		: "production"
-)
+);
