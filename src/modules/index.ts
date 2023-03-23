@@ -57,5 +57,6 @@ export default [
 		},
 		utils: { queryAwaiter: GLOBAL_AWAITER, },
 		shouldBeActive: modules.ModuleUtils.activateForRegex(/^\/?$/),
+		moduleName: "No banner ad",
 	}),
 ];
