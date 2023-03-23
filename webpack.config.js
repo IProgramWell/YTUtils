@@ -6,7 +6,7 @@ module.exports = require("userscriptbase/webpackUtils").getWebpackConfig(
 		namespace: "Violentmonkey Scripts",
 		match: ["https://www.youtube.com/**"],
 		grant: ["GM_openInTab"],
-		version: "1.6.5",
+		version: "1.6.6",
 		author: "-",
 		"inject-into": "page",
 		"run-at": "document-start",
