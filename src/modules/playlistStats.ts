@@ -1,6 +1,6 @@
-import { utils } from "userscriptbase";
+import { DateUtils } from "userscriptbase/utils";
 
-import type { modules } from "userscriptbase";
+import type { PageModule } from "userscriptbase/modules";
 import type { IYTCustomEvent } from "../../types/CustomEvent";
 
 interface IPlaylistData
@@ -38,13 +38,13 @@ function getPlaylistStats(playlistData: IPlaylistData): { runs: { text: string; 
 		{
 			"runs": [
 				{ "text": "Runtime: " },
-				{ "text": utils.DateUtils.getTimeString(playlistData.total) },
+				{ "text": DateUtils.getTimeString(playlistData.total) },
 			],
 		},
 		{
 			"runs": [
 				{ "text": "Estimated remaining: " },
-				{ "text": utils.DateUtils.getTimeString(playlistData.remaining) },
+				{ "text": DateUtils.getTimeString(playlistData.remaining) },
 			],
 		},
 	];
@@ -54,7 +54,7 @@ function getPlaylistStats(playlistData: IPlaylistData): { runs: { text: string; 
 /**
  * Adds the total and estimated remaining time of the current playlist.
  */
-export function addPLStats(this: modules.PageModule, payload: IYTCustomEvent): void
+export function addPLStats(this: PageModule, payload: IYTCustomEvent): void
 {
 	this.logger.print(payload.currentTarget);
 	const playlistData: IPlaylistData = payload
@@ -115,7 +115,7 @@ export function addPLStats(this: modules.PageModule, payload: IYTCustomEvent): v
 }
 
 // BUG: Stats not updating if there are less than 100 videos in response.
-export function updateStats(this: modules.PageModule, payload: Event & { detail: any }): void
+export function updateStats(this: PageModule, payload: Event & { detail: any }): void
 {
 	if (!(payload
 		?.["detail"]

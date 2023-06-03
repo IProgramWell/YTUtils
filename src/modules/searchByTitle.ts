@@ -1,8 +1,9 @@
-import type { modules } from "userscriptbase";
+import type { PageModule } from "userscriptbase/modules";
 
 const IDS = { SEARCH_BTN: "ytutils-searchbytitle-searchbtn" };
 
-export function addSearchBtn(this: modules.PageModule): boolean
+// BUG: navigating back to a video from a search causes search button to be added to cached one.
+export function addSearchBtn(this: PageModule): boolean
 {
 	const {
 		utils: {
@@ -61,7 +62,7 @@ export function addSearchBtn(this: modules.PageModule): boolean
 	return true;
 }
 
-export function removeSearchBtn(this: modules.PageModule): boolean
+export function removeSearchBtn(this: PageModule): boolean
 {
 	for (let id of Object.values(IDS))
 		this.utils.pageUtils.removeElementById(id);

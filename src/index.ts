@@ -1,52 +1,90 @@
-import { modules, utils } from "userscriptbase";
+import { ModuleUtils, PageModule } from "userscriptbase/modules";
+import { PageUtils, URLUtils, IOManager } from "userscriptbase/utils";
 
-import moduleList from "./modules";
-import { CUSTOM_YT_EVENTS } from "./config";
+import makeModuleList from "./modules";
+import { GLOBAL_AWAITER } from "./config";
 
-for (
-	let eventHandlerName
-	of ["init", "onDocumentStart"] as (keyof modules.PageModule["eventHandlers"])[]
-)
+(function main()
 {
-	modules.ModuleUtils.onModuleEvent({
-		moduleList,
-		eventHandlerName,
-		onlyIfShouldBeActive: false,
+	const moduleList = makeModuleList({
+		utils: {
+			queryAwaiter: GLOBAL_AWAITER,
+			pageUtils: PageUtils,
+			urlUtils: URLUtils,
+		},
 	});
-}
-for (let eventName of CUSTOM_YT_EVENTS)
+
+	for (
+		let eventHandlerName
+		of ["init", "onDocumentStart"] as (keyof PageModule["eventHandlers"])[]
+	)
+	{
+		ModuleUtils.onModuleEvent({
+			moduleList,
+			eventHandlerName,
+			onlyIfShouldBeActive: false,
+		});
+	}
+
+	/* for (let eventName of [
+		"yt-page-data-fetched",
+		"yt-service-request-completed",
+		"yt-navigate-finish",
+		// "yt-navigate-start",
+		// "yt-app-context",
+		// "yt-playlist-data-updated",
+		// "yt-navigate-redirect",
+		// "yt-get-context-provider",
+		// "yt-playlist-reloading",
+	])
+		globalThis.addEventListener(
+			eventName,
+			function (payload): void
+			{
+				ModuleUtils.callAllModulesMethod({
+					moduleList,
+					methodName: eventName,
+					methodArgs: [payload],
+					onlyIfShouldBeActive: true,
+				});
+			}
+		); */
+
 	globalThis.addEventListener(
-		eventName,
-		function (payload): void
+		"load",
+		function (): void
 		{
-			modules.ModuleUtils.callAllModulesMethod({
+			globalThis.document.head.appendChild(PageUtils.createElement(
+				"style",
+				{
+					innerHTML: `
+	.ytutils-no-pl-btn {
+		float: left;
+		top: 50%;
+		white-space: nowrap;
+	}
+	`
+						.trim(),
+					id: "ytutils-styles",
+				}
+			));
+			ModuleUtils.onModuleEvent({
 				moduleList,
-				methodName: eventName,
-				methodArgs: [payload],
-				onlyIfShouldBeActive: true,
+				eventHandlerName: "onDocumentLoad",
 			});
 		}
 	);
-globalThis.addEventListener(
-	"load",
-	function (): void
-	{
-		modules.ModuleUtils.onModuleEvent({
-			moduleList,
-			eventHandlerName: "onDocumentLoad",
-		});
-	}
-);
-globalThis.addEventListener(
-	"yt-navigate-finish",
-	function (/* event */): void
-	{
-		const currentLocation = utils.URLUtils.getCurrentLocation();
-		utils.IOManager.GLOBAL_MANAGER.print(`Changed url! New url: "${currentLocation.href}"`);
-		modules.ModuleUtils.onUrlChange({
-			moduleList,
-			logger: utils.IOManager.GLOBAL_MANAGER,
-			currentLocation
-		});
-	}
-);
+	globalThis.addEventListener(
+		"yt-navigate-finish",
+		function (/* event */): void
+		{
+			const currentLocation = URLUtils.getCurrentLocation();
+			IOManager.GLOBAL_MANAGER.print(`Changed url! New url: "${currentLocation.href}"`);
+			ModuleUtils.onUrlChange({
+				moduleList,
+				logger: IOManager.GLOBAL_MANAGER,
+				currentLocation
+			});
+		}
+	);
+})();

@@ -1,6 +1,6 @@
-import type { modules } from "userscriptbase";
+import type { PageModule } from "userscriptbase/modules";
 
-export function noShortsOnURLChange(this: modules.PageModule): boolean
+export function noShortsOnURLChange(this: PageModule): boolean
 {
 	const [_, section, shortsID] = this
 		.utils

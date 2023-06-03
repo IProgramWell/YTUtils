@@ -1,4 +1,4 @@
-import type { modules } from "userscriptbase";
+import type { PageModule } from "userscriptbase/modules";
 
 const IDS = {
 	newTabCheckboxID: "ytutils-noplaylist-newtabcheckbox",
@@ -6,11 +6,10 @@ const IDS = {
 	noPLButtonID: "ytutils-noplaylist-noplbtn",
 };
 
-export function addNoPLControls(this: modules.PageModule): boolean
+export function addNoPLControls(this: PageModule): boolean
 {
 	const { urlUtils, pageUtils } = this.utils;
 	const NO_PL_CTRL_CONTAINER = pageUtils.queryElement(".ytp-right-controls");
-	const centered = "float: left; top: 50%; white-space: nowrap;";
 	if (!NO_PL_CTRL_CONTAINER)
 		return false;
 
@@ -19,7 +18,8 @@ export function addNoPLControls(this: modules.PageModule): boolean
 		{
 			type: "checkbox",
 			id: IDS.newTabCheckboxID,
-			style: `${centered} transform: translateY(50%)`,
+			style: "transform: translateY(50%)",
+			className: "ytutils-no-pl-btn",
 			name: IDS.newTabCheckboxID,
 			title: "Open in new tab",
 		}
@@ -29,7 +29,7 @@ export function addNoPLControls(this: modules.PageModule): boolean
 		{
 			htmlFor: IDS.newTabCheckboxID,
 			innerHTML: "New tab?",
-			style: centered,
+			className: "ytutils-no-pl-btn",
 			id: IDS.newTabCheckboxLabelID,
 		}
 	);
@@ -48,7 +48,7 @@ export function addNoPLControls(this: modules.PageModule): boolean
 					urlUtils.setLocationAttribute("search", `?v=${searchParams.get("v")}`);
 			},
 			innerHTML: "No Playlist",
-			style: centered,
+			className: "ytutils-no-pl-btn",
 		}
 	);
 
@@ -61,7 +61,7 @@ export function addNoPLControls(this: modules.PageModule): boolean
 	return true;
 }
 
-export function removeNoPLControls(this: modules.PageModule): boolean
+export function removeNoPLControls(this: PageModule): boolean
 {
 	for (let id of Object.values(IDS))
 		this.utils.pageUtils.removeElementById(id);
@@ -69,7 +69,7 @@ export function removeNoPLControls(this: modules.PageModule): boolean
 	return false;
 }
 
-export function shouldBeActiveFor(this: modules.PageModule, url?: string | URL | Location): boolean
+export function shouldBeActiveFor(this: PageModule, url?: string | URL | Location): boolean
 {
 	const URL_TO_CHECK = url
 		? (typeof url === "string"
