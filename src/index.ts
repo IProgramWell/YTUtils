@@ -2,7 +2,7 @@ import { ModuleUtils, PageModule } from "userscriptbase/modules";
 import { PageUtils, URLUtils, IOManager } from "userscriptbase/utils";
 
 import makeModuleList from "./modules";
-import { GLOBAL_AWAITER } from "./config";
+import { GLOBAL_AWAITER, CLASSES, YT_EVENTS } from "./config";
 
 (function main()
 {
@@ -26,18 +26,8 @@ import { GLOBAL_AWAITER } from "./config";
 		});
 	}
 
-	/* for (let eventName of [
-		"yt-page-data-fetched",
-		"yt-service-request-completed",
-		"yt-navigate-finish",
-		// "yt-navigate-start",
-		// "yt-app-context",
-		// "yt-playlist-data-updated",
-		// "yt-navigate-redirect",
-		// "yt-get-context-provider",
-		// "yt-playlist-reloading",
-	])
-		globalThis.addEventListener(
+	for (let eventName of YT_EVENTS)
+		globalThis.document.addEventListener(
 			eventName,
 			function (payload): void
 			{
@@ -48,7 +38,7 @@ import { GLOBAL_AWAITER } from "./config";
 					onlyIfShouldBeActive: true,
 				});
 			}
-		); */
+		);
 
 	globalThis.addEventListener(
 		"load",
@@ -57,13 +47,10 @@ import { GLOBAL_AWAITER } from "./config";
 			globalThis.document.head.appendChild(PageUtils.createElement(
 				"style",
 				{
-					innerHTML: `
-	.ytutils-no-pl-btn {
-		float: left;
-		top: 50%;
-		white-space: nowrap;
-	}
-	`
+					innerHTML: Object
+						.entries(CLASSES)
+						.map(([className, css]) => `.${className} ${css}`)
+						.join("\n")
 						.trim(),
 					id: "ytutils-styles",
 				}

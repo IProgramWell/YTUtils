@@ -1,1 +1,0 @@
-export * as CustomEvent from "./CustomEvent";

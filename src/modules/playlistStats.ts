@@ -1,7 +1,6 @@
 import { DateUtils } from "userscriptbase/utils";
 
 import type { PageModule } from "userscriptbase/modules";
-import type { IYTCustomEvent } from "../../types/CustomEvent";
 
 interface IPlaylistData
 {
@@ -11,7 +10,10 @@ interface IPlaylistData
 const STATE_KEYS = {
 	TOTAL_RUNTIME: "totalRuntime",
 	REMAINING_RUNTIME: "remainingRuntime",
+	PLAYLIST_DATA: "plData",
 };
+const REMAINING_TEXT = "Estimated remaining: ";
+const RUNTIME_TEXT = "Runtime: ";
 
 function playlistDataReduceFunc(
 	playlist: IPlaylistData,
@@ -32,32 +34,15 @@ function playlistDataReduceFunc(
 	return playlist;
 }
 
-function getPlaylistStats(playlistData: IPlaylistData): { runs: { text: string; }[]; }[]
+export function initState(this: PageModule)
 {
-	return [
-		{
-			"runs": [
-				{ "text": "Runtime: " },
-				{ "text": DateUtils.getTimeString(playlistData.total) },
-			],
-		},
-		{
-			"runs": [
-				{ "text": "Estimated remaining: " },
-				{ "text": DateUtils.getTimeString(playlistData.remaining) },
-			],
-		},
-	];
+	this.setStateValue(STATE_KEYS.TOTAL_RUNTIME, 0);
+	this.setStateValue(STATE_KEYS.REMAINING_RUNTIME, 0);
 }
 
-// TODO: figure out what broke when yt changed their shit.
-/**
- * Adds the total and estimated remaining time of the current playlist.
- */
-export function addPLStats(this: PageModule, payload: IYTCustomEvent): void
+export function plDataFetched(this: PageModule, payload: CustomEvent)
 {
-	this.logger.print(payload.currentTarget);
-	const playlistData: IPlaylistData = payload
+	let plData: IPlaylistData = payload
 	["detail"]
 	["pageData"]
 	["response"]
@@ -78,37 +63,84 @@ export function addPLStats(this: PageModule, payload: IYTCustomEvent): void
 				"total": this.getStateValue(STATE_KEYS.TOTAL_RUNTIME, 0),
 				"remaining": this.getStateValue(STATE_KEYS.REMAINING_RUNTIME, 0),
 			}
-		),
-		customStats = getPlaylistStats(playlistData);
+		);
+	this.setStateValue(STATE_KEYS.TOTAL_RUNTIME, plData["total"]);
+	this.setStateValue(STATE_KEYS.REMAINING_RUNTIME, plData["remaining"]);
+}
 
-	this.setStateValue(STATE_KEYS.TOTAL_RUNTIME, playlistData["total"]);
-	this.setStateValue(STATE_KEYS.REMAINING_RUNTIME, playlistData["remaining"]);
+/* 
+yt-page-data-fetched
+data-changed
+yt-page-data-updated
+yt-service-request-completed
+ */
+// TODO: figure out what broke when yt changed their shit.
+/**
+ * Adds the total and estimated remaining time of the current playlist.
+ */
+export function addPLStats(this: PageModule): void
+{
+	const container: Element = this.utils.pageUtils.queryElement("div.metadata-stats");
 
-	this.logger.print({
-		"playlistData": playlistData,
-		"customStats": customStats,
-		"stats": payload
-		["detail"]
-		["pageData"]
-		["response"]
-		["sidebar"]
-		["playlistSidebarRenderer"]
-		["items"]
-		[0]
-		["playlistSidebarPrimaryInfoRenderer"]
-		["stats"]
-	});
+	const seperator: Element = this.utils.pageUtils.createElement(
+		"yt-icon",
+		{
+			id: "byline-icon",
+			className: "style-scope ytd-playlist-byline-renderer",
+		}
+	);
+	const runtimeDisplay: Element = this.utils.pageUtils.createElement(
+		"yt-formatted-string",
+		{ className: "byline-item style-scope ytd-playlist-byline-renderer ytutils-test", },
+		[
+			this.utils.pageUtils.createElement(
+				"span",
+				{
+					dir: "auto",
+					className: "style-scope yt-formatted-string",
+				},
+				[RUNTIME_TEXT]
+			),
+			this.utils.pageUtils.createElement(
+				"span",
+				{
+					dir: "auto",
+					className: "style-scope yt-formatted-string",
+				},
+				[DateUtils.getTimeString(this.getStateValue(STATE_KEYS.TOTAL_RUNTIME, 0))]
+			),
+		]
+	);
+	const remainingTimeDisplay: Element = this.utils.pageUtils.createElement(
+		"yt-formatted-string",
+		{ className: "byline-item style-scope ytd-playlist-byline-renderer ytutils-test", },
+		[
+			this.utils.pageUtils.createElement(
+				"span",
+				{
+					dir: "auto",
+					className: "style-scope yt-formatted-string",
+				},
+				[REMAINING_TEXT]
+			),
+			this.utils.pageUtils.createElement(
+				"span",
+				{
+					dir: "auto",
+					className: "style-scope yt-formatted-string",
+				},
+				[DateUtils.getTimeString(this.getStateValue(STATE_KEYS.REMAINING_RUNTIME, 0))]
+			),
+		]
+	);
+	const lastNode: Element = this.utils.pageUtils.queryElement("dom-repeat.style-scope ytd-playlist-byline-renderer");
+	for (let node of [
+		seperator,
+		runtimeDisplay,
+		remainingTimeDisplay,
+	])
+		container.insertBefore(node, lastNode);
 
-	payload
-	["detail"]
-	["pageData"]
-	["response"]
-	["sidebar"]
-	["playlistSidebarRenderer"]
-	["items"][0]
-	["playlistSidebarPrimaryInfoRenderer"]
-	["stats"]
-	["push"](...customStats);
 	this.logger.print("Added time to playlist!");
 
 	this.isActive = true;
@@ -140,20 +172,19 @@ export function updateStats(this: PageModule, payload: Event & { detail: any }):
 				"total": this.getStateValue(STATE_KEYS.TOTAL_RUNTIME, 0),
 				"remaining": this.getStateValue(STATE_KEYS.REMAINING_RUNTIME, 0),
 			}
-		),
-		customStats = getPlaylistStats(playlistData);
-	let statName: { text: string; }, statValue: { text: string; };
+		);
 	this.setStateValue(STATE_KEYS.TOTAL_RUNTIME, playlistData["total"]);
 	this.setStateValue(STATE_KEYS.REMAINING_RUNTIME, playlistData["remaining"]);
-	this.logger.print({ playlistData, customStats });
-	for (let stat of customStats)
+	for (let [stat, value] of [
+		[RUNTIME_TEXT, playlistData.total],
+		[REMAINING_TEXT, playlistData.remaining]
+	])
 	{
-		[statName, statValue] = stat["runs"];
 		this
 			.utils
 			.pageUtils
 			.evaluate(
-				`//ytd-playlist-byline-renderer/div/yt-formatted-string/span[text() = "${statName.text}"]`,
+				`//ytd-playlist-byline-renderer/div/yt-formatted-string/span[text() = "${stat}"]`,
 				document.body ?? document,
 				null,
 				XPathResult.ANY_UNORDERED_NODE_TYPE,
@@ -162,6 +193,6 @@ export function updateStats(this: PageModule, payload: Event & { detail: any }):
 			.singleNodeValue
 			.parentElement
 			.lastChild
-			.textContent = statValue["text"];
+			.textContent = value;
 	}
 }

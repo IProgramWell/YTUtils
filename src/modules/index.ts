@@ -15,14 +15,20 @@ export default function createModuleList(options: {
 				onModuleStart: noShorts.noShortsOnURLChange,
 				onDocumentStart: noShorts.noShortsOnURLChange,
 			},
+			methods: { "yt-navigate-start": noShorts.noShortsOnNavigate, },
 			shouldBeActive: ModuleUtils.activateForRegex(/^\/shorts\/.+$/i),
 			utils: options.utils,
 			moduleName: "No Shorts Redirector",
 		}),
 		/* new PageModule({
 			methods: {
-				"yt-page-data-fetched": playlistStats.addPLStats,
+				"yt-page-data-fetched": playlistStats.plDataFetched,
 				"yt-service-request-completed": playlistStats.updateStats,
+				"yt-watch-comments-ready": playlistStats.addPLStats,
+			},
+			eventHandlers: {
+				onModuleStart: playlistStats.initState,
+				onDocumentStart: playlistStats.initState,
 			},
 			shouldBeActive: ModuleUtils.activateForRegex(/^\/playlist\/?$/i),
 			moduleName: "Custom Playlist Statistics",

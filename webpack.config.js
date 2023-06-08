@@ -1,11 +1,12 @@
-const ENV_MODE = process.env.NODE_ENV?.toLowerCase?.();
-
 module.exports = require("userscriptbase/webpackUtils").getWebpackConfig(
 	{
 		name: "YT Utils",
 		namespace: "Violentmonkey Scripts",
 		match: ["https://www.youtube.com/**"],
-		grant: ["GM_openInTab"],
+		grant: [
+			"GM_info",
+			"GM_openInTab",
+		],
 		version: "1.6.6",
 		author: "-",
 		"inject-into": "page",
@@ -15,12 +16,13 @@ module.exports = require("userscriptbase/webpackUtils").getWebpackConfig(
 		downloadURL: "https://raw.githubusercontent.com/IProgramWell/YTUtils/master/dist/YTUtils.user.js",
 	},
 	require("path").resolve(__dirname, "dist"),
-	[
+	process.env.NODE_ENV?.toLowerCase?.() ?? "production"
+	/* [
 		"development",
 		"none",
 		"production"
 	]
 		.includes(ENV_MODE)
 		? ENV_MODE
-		: "production"
+		: "production" */
 );
