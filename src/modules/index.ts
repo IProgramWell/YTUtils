@@ -4,6 +4,7 @@ import { PageModule, ModuleUtils } from "userscriptbase/modules";
 import * as noShorts from "./noShorts";
 import * as noPlaylist from "./noPlaylist";
 import * as searchByTitle from "./searchByTitle";
+import * as noAds from "./noAds";
 
 export default function createModuleList(options: {
 	utils: PageModule["utils"],
@@ -53,25 +54,10 @@ export default function createModuleList(options: {
 			utils: options.utils,
 		}),
 		new PageModule({
-			eventHandlers: {
-				onModuleStart(this: PageModule)
-				{
-					if (!this?.utils?.queryAwaiter)
-						return false;
-					this.utils.queryAwaiter.addQuery(
-						"div#masthead-ad",
-						function (ads: NodeList)
-						{
-							for (let i = 0; i < ads.length; i++)
-								ads[i].parentNode.removeChild(ads[i]);
-						}
-					);
-					return true;
-				}
-			},
-			utils: options.utils,
+			eventHandlers: noAds,
 			shouldBeActive: ModuleUtils.activateForRegex(/^\/?$/),
-			moduleName: "No banner ad",
-		}),
+			moduleName: "No (more) banner ads",
+			utils: options.utils,
+		})
 	]
 };

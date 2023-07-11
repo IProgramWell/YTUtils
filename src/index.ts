@@ -1,5 +1,5 @@
-import { ModuleUtils, PageModule } from "userscriptbase/modules";
-import { PageUtils, URLUtils, IOManager } from "userscriptbase/utils";
+import { ModuleUtils } from "userscriptbase/modules";
+import { PageUtils, URLUtils, IOManager, RequestUtils } from "userscriptbase/utils";
 
 import makeModuleList from "./modules";
 import { GLOBAL_AWAITER, CLASSES, YT_EVENTS } from "./config";
@@ -11,20 +11,21 @@ import { GLOBAL_AWAITER, CLASSES, YT_EVENTS } from "./config";
 			queryAwaiter: GLOBAL_AWAITER,
 			pageUtils: PageUtils,
 			urlUtils: URLUtils,
+			requestUtils: RequestUtils,
+			globals: globalThis,
 		},
 	});
 
-	for (
-		let eventHandlerName
-		of ["init", "onDocumentStart"] as (keyof PageModule["eventHandlers"])[]
-	)
-	{
-		ModuleUtils.onModuleEvent({
-			moduleList,
-			eventHandlerName,
-			onlyIfShouldBeActive: false,
-		});
-	}
+	ModuleUtils.onModuleEvent({
+		moduleList,
+		eventHandlerName: "init",
+		onlyIfShouldBeActive: false,
+	});
+	ModuleUtils.onModuleEvent({
+		moduleList,
+		eventHandlerName: "onDocumentStart",
+		onlyIfShouldBeActive: true,
+	});
 
 	for (let eventName of YT_EVENTS)
 		globalThis.document.addEventListener(

@@ -9,11 +9,11 @@ const IDS = {
 export function addNoPLControls(this: PageModule): boolean
 {
 	const { urlUtils, pageUtils } = this.utils;
-	const NO_PL_CTRL_CONTAINER = pageUtils.queryElement(".ytp-right-controls");
+	const NO_PL_CTRL_CONTAINER: HTMLElement = pageUtils.queryElement(".ytp-right-controls");
 	if (!NO_PL_CTRL_CONTAINER)
 		return false;
 
-	const newTabCheckbox = pageUtils.createElement(
+	const newTabCheckbox: HTMLInputElement = pageUtils.createElement(
 		"input",
 		{
 			type: "checkbox",
@@ -22,9 +22,10 @@ export function addNoPLControls(this: PageModule): boolean
 			className: "ytutils-no-pl-btn",
 			name: IDS.newTabCheckboxID,
 			title: "Open in new tab",
+			checked: true,
 		}
 	);
-	const newTabCheckboxLabel = pageUtils.createElement(
+	const newTabCheckboxLabel: HTMLLabelElement = pageUtils.createElement(
 		"label",
 		{
 			htmlFor: IDS.newTabCheckboxID,
@@ -33,7 +34,7 @@ export function addNoPLControls(this: PageModule): boolean
 			id: IDS.newTabCheckboxLabelID,
 		}
 	);
-	const redirectButton = pageUtils.createElement(
+	const redirectButton: HTMLButtonElement = pageUtils.createElement(
 		"button",
 		{
 			// className: "ytp-button",
