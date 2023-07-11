@@ -1,14 +1,21 @@
+import { Replacement } from "userscriptbase/utils";
+
 import type { PageModule } from "userscriptbase/modules";
 
 interface NoAdModule extends PageModule<
-	{ onModuleStart(this: PageModule): boolean; },
-	{},
-	{}
+	{ onModuleStart(this: NoAdModule): boolean; },
+	{ createElementReplacement: Replacement<Document, "createElement">; },
+	{ document: Document; }
 > { }
 
 export function onModuleStart(this: NoAdModule)
 {
-	this.utils.queryAwaiter?.addQuery(
+	let { queryAwaiter } = this.utils;
+
+	if (!queryAwaiter)
+		return false;
+
+	queryAwaiter.addQuery(
 		"div#masthead-ad",
 		function (ads: NodeList)
 		{
@@ -17,5 +24,14 @@ export function onModuleStart(this: NoAdModule)
 		}
 	);
 
-	return false;
+	queryAwaiter.addQuery(
+		"ytd-in-feed-ad-layout-renderer",
+		function (ads: NodeList)
+		{
+			for (let ad of Array.from(ads))
+				ad.parentElement.parentElement.parentElement.remove();
+		}
+	);
+
+	return true;
 }
