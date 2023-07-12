@@ -1,6 +1,7 @@
 import type { PageModule } from "userscriptbase/modules";
 
 const IDS = { SEARCH_BTN: "ytutils-searchbytitle-searchbtn" };
+const TITLE_QUERY = "div#title yt-formatted-string";
 
 // BUG: navigating back to a video from a search causes search button to be added to cached one.
 export function addSearchBtn(this: PageModule): boolean
@@ -13,7 +14,6 @@ export function addSearchBtn(this: PageModule): boolean
 		},
 		logger
 	} = this;
-	const TITLE_XPATH = "//div[@id=\"title\"]/h1/yt-formatted-string[text()]";
 	if (!queryAwaiter)
 		return false;
 
@@ -26,39 +26,23 @@ export function addSearchBtn(this: PageModule): boolean
 			id: IDS.SEARCH_BTN,
 			onclick(): void
 			{
-				urlUtils.navigate(
-					`https://youtube.com/results?search_query=${encodeURIComponent(
-						pageUtils.evaluate(
-							TITLE_XPATH,
-							document.body ?? document,
-							null,
-							XPathResult.ANY_UNORDERED_NODE_TYPE,
-							null
-						)
-							.singleNodeValue
-							.textContent
-					)}`
-				);
+				let title = pageUtils.queryElement(TITLE_QUERY)?.textContent;
+				if (title)
+					urlUtils.navigate(
+						`https://youtube.com/results?search_query=${encodeURIComponent(title)}`
+					);
 			}
 		}
 	);
-	queryAwaiter.addXpath(
+	queryAwaiter.addQuery(
+		TITLE_QUERY,
+		function (titleList: NodeListOf<HTMLElement>)
 		{
-			xpath: TITLE_XPATH,
-			contextNode: document.body ?? document,
-			isValidResult(result: XPathResult): boolean
-			{
-				try { return !!result.singleNodeValue; }
-				catch (_) { return false; }
-			},
-			resultType: XPathResult.ANY_UNORDERED_NODE_TYPE
-		},
-		function (result: XPathResult): void
-		{
-			logger.print(result.singleNodeValue);
-			result.singleNodeValue.parentElement.append(searchBtn);
+			let title = titleList[0];
+			logger.print(title);
+			title.parentElement.appendChild(searchBtn);
 		}
-	);
+	)
 	return true;
 }
 

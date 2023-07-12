@@ -31,5 +31,14 @@ export function onModuleStart(this: NoAdModule)
 		}
 	);
 
+	queryAwaiter.addQuery(
+		"ytd-ad-slot-renderer",
+		function (ads: NodeList)
+		{
+			for (let ad of Array.from(ads))
+				ad.parentElement.removeChild(ad);
+		}
+	)
+
 	return true;
 }

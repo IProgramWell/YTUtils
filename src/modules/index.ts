@@ -53,7 +53,7 @@ export default function createModuleList(options: Pick<PageModule, "utils">): Pa
 		}),
 		new PageModule({
 			eventHandlers: noAds,
-			shouldBeActive: ModuleUtils.activateForRegex(/^\/$/),
+			shouldBeActive: ModuleUtils.activateForRegex(/^\/(results|watch)?\/?$/),
 			moduleName: "No (more) banner ads",
 			utils: options.utils,
 		}),

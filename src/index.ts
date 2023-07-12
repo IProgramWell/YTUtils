@@ -16,11 +16,7 @@ import { GLOBAL_AWAITER, CLASSES, YT_EVENTS } from "./config";
 		},
 	});
 
-	ModuleUtils.onModuleEvent({
-		moduleList,
-		eventHandlerName: "init",
-		onlyIfShouldBeActive: false,
-	});
+	ModuleUtils.initModules({ moduleList, });
 	ModuleUtils.onModuleEvent({
 		moduleList,
 		eventHandlerName: "onDocumentStart",
