@@ -1,0 +1,35 @@
+name: Build
+
+on:
+  push:
+    branches: ["master"]
+  pull_request:
+    branches: ["master"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16.x]
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: Install dependencies
+      run: npm install
+    - name: Run unit tests
+      run: npm test
+    - name: Build script
+      run: npm run build
+    - name: Adding to repo
+      run: |
+        git add ./dist
+        git config --local user.name ${{ github.event.pusher.name }}
+        git config --local user.email ${{ github.event.pusher.email }}
+        git commit -m "[Github Action] Compiling commit: \"${{ github.event.head_commit.message }}\""
+        git push origin HEAD:master

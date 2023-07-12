@@ -34,13 +34,13 @@ function playlistDataReduceFunc(
 	return playlist;
 }
 
-export function initState(this: PageModule)
+export function initState(this: PageModule): void
 {
 	this.setStateValue(STATE_KEYS.TOTAL_RUNTIME, 0);
 	this.setStateValue(STATE_KEYS.REMAINING_RUNTIME, 0);
 }
 
-export function plDataFetched(this: PageModule, payload: CustomEvent)
+export function plDataFetched(this: PageModule, payload: CustomEvent): void
 {
 	let plData: IPlaylistData = payload
 	["detail"]

@@ -6,7 +6,7 @@ interface NoAdModule extends PageModule<
 	{}
 > { }
 
-export function onModuleStart(this: NoAdModule)
+export function onModuleStart(this: NoAdModule): boolean
 {
 	let { queryAwaiter } = this.utils;
 
@@ -38,7 +38,7 @@ export function onModuleStart(this: NoAdModule)
 			for (let ad of Array.from(ads))
 				ad.parentElement.removeChild(ad);
 		}
-	)
+	);
 
 	return true;
 }
