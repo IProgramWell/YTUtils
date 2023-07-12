@@ -16,6 +16,7 @@
 		"moduleResolution": "NodeNext",
 		"resolveJsonModule": true,
 		"rootDirs": ["src"],
+		"baseUrl": "src",
 		"noEmitOnError": true,
 		"outDir": "dist",
 		"checkJs": true,

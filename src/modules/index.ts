@@ -6,9 +6,7 @@ import * as noPlaylist from "./noPlaylist";
 import * as searchByTitle from "./searchByTitle";
 import * as noAds from "./noAds";
 
-export default function createModuleList(options: {
-	utils: PageModule["utils"],
-}): PageModule[]
+export default function createModuleList(options: Pick<PageModule, "utils">): PageModule[]
 {
 	return [
 		new PageModule({
@@ -55,9 +53,9 @@ export default function createModuleList(options: {
 		}),
 		new PageModule({
 			eventHandlers: noAds,
-			shouldBeActive: ModuleUtils.activateForRegex(/^\/?$/),
+			shouldBeActive: ModuleUtils.activateForRegex(/^\/$/),
 			moduleName: "No (more) banner ads",
 			utils: options.utils,
-		})
+		}),
 	]
 };

@@ -1,11 +1,9 @@
-import { Replacement } from "userscriptbase/utils";
-
 import type { PageModule } from "userscriptbase/modules";
 
 interface NoAdModule extends PageModule<
 	{ onModuleStart(this: NoAdModule): boolean; },
-	{ createElementReplacement: Replacement<Document, "createElement">; },
-	{ document: Document; }
+	{},
+	{}
 > { }
 
 export function onModuleStart(this: NoAdModule)
