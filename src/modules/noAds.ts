@@ -1,17 +1,11 @@
 import type { PageModule } from "userscriptbase/modules";
 
-interface NoAdModule extends PageModule<
-	{ onModuleStart(this: NoAdModule): boolean; },
-	{},
-	{}
-> { }
-
-export function onModuleStart(this: NoAdModule): boolean
+export function addListeners(this: PageModule): void
 {
-	let { queryAwaiter } = this.utils;
+	let { queryAwaiter, } = this.utils;
 
 	if (!queryAwaiter)
-		return false;
+		return;
 
 	queryAwaiter.addQuery(
 		"div#masthead-ad",
@@ -19,7 +13,8 @@ export function onModuleStart(this: NoAdModule): boolean
 		{
 			for (let ad of Array.from(ads))
 				ad.parentElement.removeChild(ad);
-		}
+		},
+		false
 	);
 
 	queryAwaiter.addQuery(
@@ -28,7 +23,8 @@ export function onModuleStart(this: NoAdModule): boolean
 		{
 			for (let ad of Array.from(ads))
 				ad.parentElement.parentElement.parentElement.remove();
-		}
+		},
+		false
 	);
 
 	queryAwaiter.addQuery(
@@ -37,8 +33,7 @@ export function onModuleStart(this: NoAdModule): boolean
 		{
 			for (let ad of Array.from(ads))
 				ad.parentElement.removeChild(ad);
-		}
+		},
+		false
 	);
-
-	return true;
 }
