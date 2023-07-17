@@ -12,7 +12,6 @@ import { GLOBAL_AWAITER, CLASSES, YT_EVENTS } from "./config";
 			pageUtils: PageUtils,
 			urlUtils: URLUtils,
 			requestUtils: RequestUtils,
-			globals: globalThis,
 		},
 	});
 
@@ -22,6 +21,19 @@ import { GLOBAL_AWAITER, CLASSES, YT_EVENTS } from "./config";
 		eventHandlerName: "onDocumentStart",
 		onlyIfShouldBeActive: true,
 	});
+
+	for (let module of moduleList)
+		globalThis.GM_registerMenuCommand(
+			`Enable/Disable "${module.moduleName}" module`,
+			function ()
+			{
+				let { isDisabled } = module;
+				module.isDisabled = !isDisabled;
+				IOManager.GLOBAL_MANAGER.print(
+					`${isDisabled ? "En" : "Dis"}abled module "${module.moduleName}"`
+				);
+			}
+		)
 
 	for (let eventName of YT_EVENTS)
 		globalThis.document.addEventListener(

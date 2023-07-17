@@ -1,3 +1,5 @@
+import { ModuleUtils } from "userscriptbase/modules";
+
 import type { PageModule } from "userscriptbase/modules";
 
 const IDS = {
@@ -70,6 +72,7 @@ export function removeNoPLControls(this: PageModule): boolean
 	return false;
 }
 
+const regexpActivation = ModuleUtils.activateForRegex(/\/watch\/?/i);
 export function shouldBeActiveFor(this: PageModule, url?: string | URL | Location): boolean
 {
 	const URL_TO_CHECK = url
@@ -80,7 +83,7 @@ export function shouldBeActiveFor(this: PageModule, url?: string | URL | Locatio
 		: this.utils.urlUtils.getCurrentLocation();
 
 	return (
-		/\/watch\/?/i.test(URL_TO_CHECK.pathname) &&
+		regexpActivation.call(this, URL_TO_CHECK) &&
 		//If the current video is NOT played from a playlist, do nothing.
 		!!this.utils.pageUtils.getSearchParams(URL_TO_CHECK).get("list")
 	);
