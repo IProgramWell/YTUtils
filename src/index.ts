@@ -19,7 +19,6 @@ import { GLOBAL_AWAITER, CLASSES, YT_EVENTS } from "./config";
 	ModuleUtils.onModuleEvent({
 		moduleList,
 		eventHandlerName: "onDocumentStart",
-		onlyIfShouldBeActive: true,
 	});
 
 	for (let module of moduleList)
@@ -27,10 +26,13 @@ import { GLOBAL_AWAITER, CLASSES, YT_EVENTS } from "./config";
 			`Enable/Disable "${module.moduleName}" module`,
 			function ()
 			{
-				let { isDisabled } = module;
-				module.isDisabled = !isDisabled;
+				let disabled = module.isDisabled();
+				if (disabled)
+					module.enable(true);
+				else
+					module.disable();
 				IOManager.GLOBAL_MANAGER.print(
-					`${isDisabled ? "En" : "Dis"}abled module "${module.moduleName}"`
+					`${disabled ? "En" : "Dis"}abled module "${module.moduleName}"`
 				);
 			}
 		)

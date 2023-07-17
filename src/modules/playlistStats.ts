@@ -143,7 +143,7 @@ export function addPLStats(this: PageModule): void
 
 	this.logger.print("Added time to playlist!");
 
-	this.isActive = true;
+	this.activate();
 }
 
 // BUG: Stats not updating if there are less than 100 videos in response.
