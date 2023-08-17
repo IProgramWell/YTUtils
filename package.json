@@ -7,13 +7,15 @@
     "build": "npm test && webpack",
     "test": "",
     "circ": "madge --circular --extensions js,ts --warning --ts-config ./tsconfig.json .",
-    "tc": "echo \"Running type checks...\" && tsc --noEmit && echo \"Done!\""
+    "tc": "echo \"Running type checks...\" && tsc --noEmit && echo \"Done!\"",
+    "dev": "nodemon -e js,ts -i dist/ -x \"npm run build\""
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@types/webpack": "^5.28.0",
     "madge": "^6.0.0",
+    "nodemon": "^3.0.1",
     "terser-webpack-plugin": "^5.3.7",
     "ts-loader": "^9.4.2",
     "typescript": "^5.0.2",

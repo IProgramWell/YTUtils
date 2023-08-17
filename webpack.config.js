@@ -7,7 +7,6 @@ module.exports = require("userscriptbase/webpackUtils").getWebpackConfig(
 		match: ["https://www.youtube.com/**"],
 		grant: [
 			"GM_info",
-			"GM_openInTab",
 			"GM_registerMenuCommand",
 		],
 		version: package.version,
@@ -20,12 +19,4 @@ module.exports = require("userscriptbase/webpackUtils").getWebpackConfig(
 	},
 	require("path").resolve(__dirname, "dist"),
 	process.env.NODE_ENV?.toLowerCase?.() ?? "production"
-	/* [
-		"development",
-		"none",
-		"production"
-	]
-		.includes(ENV_MODE)
-		? ENV_MODE
-		: "production" */
 );

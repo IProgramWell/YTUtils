@@ -7,11 +7,12 @@ interface IPlaylistData
 	total: number;
 	remaining: number;
 }
-const STATE_KEYS = {
-	TOTAL_RUNTIME: "totalRuntime",
-	REMAINING_RUNTIME: "remainingRuntime",
-	PLAYLIST_DATA: "plData",
-};
+
+type StatsModule = PageModule<{
+	totalRuntime: number;
+	remainingRuntime: number;
+}>;
+
 const REMAINING_TEXT = "Estimated remaining: ";
 const RUNTIME_TEXT = "Runtime: ";
 
@@ -34,13 +35,13 @@ function playlistDataReduceFunc(
 	return playlist;
 }
 
-export function initState(this: PageModule): void
+export function initState(this: StatsModule): void
 {
-	this.setStateValue(STATE_KEYS.TOTAL_RUNTIME, 0);
-	this.setStateValue(STATE_KEYS.REMAINING_RUNTIME, 0);
+	this.setStateValue("totalRuntime", 0);
+	this.setStateValue("remainingRuntime", 0);
 }
 
-export function plDataFetched(this: PageModule, payload: CustomEvent): void
+export function plDataFetched(this: StatsModule, payload: CustomEvent): void
 {
 	let plData: IPlaylistData = payload
 	["detail"]
@@ -60,12 +61,12 @@ export function plDataFetched(this: PageModule, payload: CustomEvent): void
 		.reduce(
 			playlistDataReduceFunc,
 			{
-				"total": this.getStateValue(STATE_KEYS.TOTAL_RUNTIME, 0),
-				"remaining": this.getStateValue(STATE_KEYS.REMAINING_RUNTIME, 0),
+				"total": this.getStateValue("totalRuntime", 0),
+				"remaining": this.getStateValue("remainingRuntime", 0),
 			}
 		);
-	this.setStateValue(STATE_KEYS.TOTAL_RUNTIME, plData["total"]);
-	this.setStateValue(STATE_KEYS.REMAINING_RUNTIME, plData["remaining"]);
+	this.setStateValue("totalRuntime", plData["total"]);
+	this.setStateValue("remainingRuntime", plData["remaining"]);
 }
 
 /* 
@@ -78,7 +79,7 @@ yt-service-request-completed
 /**
  * Adds the total and estimated remaining time of the current playlist.
  */
-export function addPLStats(this: PageModule): void
+export function addPLStats(this: StatsModule): void
 {
 	const container: Element = this.utils.pageUtils.queryElement("div.metadata-stats");
 
@@ -107,7 +108,7 @@ export function addPLStats(this: PageModule): void
 					dir: "auto",
 					className: "style-scope yt-formatted-string",
 				},
-				[DateUtils.getTimeString(this.getStateValue(STATE_KEYS.TOTAL_RUNTIME, 0))]
+				[DateUtils.getTimeString(this.getStateValue("totalRuntime", 0))]
 			),
 		]
 	);
@@ -129,7 +130,7 @@ export function addPLStats(this: PageModule): void
 					dir: "auto",
 					className: "style-scope yt-formatted-string",
 				},
-				[DateUtils.getTimeString(this.getStateValue(STATE_KEYS.REMAINING_RUNTIME, 0))]
+				[DateUtils.getTimeString(this.getStateValue("remainingRuntime", 0))]
 			),
 		]
 	);
@@ -143,11 +144,11 @@ export function addPLStats(this: PageModule): void
 
 	this.logger.print("Added time to playlist!");
 
-	this.activate();
+	// TODO: Mark this module as active
 }
 
 // BUG: Stats not updating if there are less than 100 videos in response.
-export function updateStats(this: PageModule, payload: Event & { detail: any }): void
+export function updateStats(this: StatsModule, payload: Event & { detail: any }): void
 {
 	if (!(payload
 		?.["detail"]
@@ -169,12 +170,12 @@ export function updateStats(this: PageModule, payload: Event & { detail: any }):
 		.reduce(
 			playlistDataReduceFunc,
 			{
-				"total": this.getStateValue(STATE_KEYS.TOTAL_RUNTIME, 0),
-				"remaining": this.getStateValue(STATE_KEYS.REMAINING_RUNTIME, 0),
+				"total": this.getStateValue("totalRuntime", 0),
+				"remaining": this.getStateValue("remainingRuntime", 0),
 			}
 		);
-	this.setStateValue(STATE_KEYS.TOTAL_RUNTIME, playlistData["total"]);
-	this.setStateValue(STATE_KEYS.REMAINING_RUNTIME, playlistData["remaining"]);
+	this.setStateValue("totalRuntime", playlistData["total"]);
+	this.setStateValue("remainingRuntime", playlistData["remaining"]);
 	for (let [stat, value] of [
 		[RUNTIME_TEXT, playlistData.total],
 		[REMAINING_TEXT, playlistData.remaining]
