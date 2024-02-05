@@ -14,13 +14,11 @@
 		"allowSyntheticDefaultImports": true,
 		"module": "NodeNext",
 		"moduleResolution": "NodeNext",
-		"rootDirs": [
-			"src"
-		],
+		"rootDirs": ["src"],
 		"baseUrl": "src",
 		"noEmitOnError": true,
 		"outDir": "dist",
-		"checkJs": true,
+		"checkJs": false,
 		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": false,
 		"isolatedModules": false,
@@ -29,7 +27,7 @@
 			"DOM",
 		],
 		"target": "ES6",
-		"maxNodeModuleJsDepth": 5,
+		"maxNodeModuleJsDepth": 5
 	},
 	"include": [
 		"./src",
@@ -38,8 +36,5 @@
 	"files": [
 		// "./global.d.ts"
 		"./node_modules/userscriptbase/global.d.ts"
-	],
-	"exclude": [
-		"./node_modules/"
-	],
+	]
 }
