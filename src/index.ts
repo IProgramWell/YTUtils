@@ -60,7 +60,8 @@ import { GLOBAL_AWAITER, CLASSES, YT_EVENTS } from "./config";
 				{
 					innerHTML: Object
 						.entries(CLASSES)
-						.map(([className, css]) => `.${className} ${css}`)
+						// .map(([selector, css]) => `${selector} ${css}`)
+						.map(ent => ent.join(" ").trim())
 						.join("\n")
 						.trim(),
 					id: "ytutils-styles",

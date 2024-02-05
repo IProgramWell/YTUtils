@@ -1,13 +1,20 @@
-const package = JSON.parse(require("fs").readFileSync(require("path").resolve("package.json")));
+const FS = require("fs");
+const Path = require("path");
 
-module.exports = require("userscriptbase/webpackUtils").getWebpackConfig(
+const { getWebpackConfig } = require("userscriptbase/webpackUtils");
+
+const package = JSON.parse(FS.readFileSync(Path.resolve("package.json")));
+
+const baseConfig = getWebpackConfig(
 	{
 		name: "YT Utils",
 		namespace: "Violentmonkey Scripts",
 		match: ["https://www.youtube.com/**"],
+		"exclude-match": ["https://www.youtube.com/embed/**"],
 		grant: [
 			"GM_info",
 			"GM_registerMenuCommand",
+			"unsafeWindow"
 		],
 		version: package.version,
 		author: "-",
@@ -17,6 +24,8 @@ module.exports = require("userscriptbase/webpackUtils").getWebpackConfig(
 		homepageURL: "https://github.com/IProgramWell/YTUtils",
 		downloadURL: "https://raw.githubusercontent.com/IProgramWell/YTUtils/master/dist/YTUtils.user.js",
 	},
-	require("path").resolve(__dirname, "dist"),
+	Path.resolve(__dirname, "dist"),
 	process.env.NODE_ENV?.toLowerCase?.() ?? "production"
 );
+
+module.exports = baseConfig;
